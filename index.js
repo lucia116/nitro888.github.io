@@ -1,93 +1,934 @@
-const NETWORK={'isMainNet':!1,'name':'Ropsten Test Network','provider':'https://ropsten.infura.io','ethscan':'https://ropsten.etherscan.io',};const iCard='<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVDhPtVQ9SMNgFGwVQd0VHF2kCIIIopMu/lDBzYjUoQSStg4Oxa1LJ6Fb9zoIOumignMRddDZSQUpuBV/EMTBDnrXXtsvaUpF6MHxvrt3730hhIS6CsdxJhOJhNWOrutOK9oZGCiAP3/gQTqdHtBYMHDzFMOoRTzlOs4tT0effZyZ+wZvwHwymVzJZrM9WlUDGhsMYmhTViDY18I71DLP0qeK1AAjpkZMFl9BBPqaVVZLDheMQZ/Jm6mGCH8QdQJ8oQeWqYNyBPQ2PSxfluUN2rY9hPMztcES/aCFOB/SY1+WdyG4pyV+FsycRvmET9APkjWYQfBKC/y8NHOaG1Fvv7qoDjPId4H6Bn4o/EmNz2PRzHEO3pq0U11Uhz9oWVYvzlF5UeqgHGqeGovHqRvwBwl+sNA5VllBC2+hX3EMUzfgD7aDmUMdRK2A52o3AXNBwRyk97YmwuwrtwTO8wxm1G+Ct4H3CnTiYzwe70fNSM9pjRepVGoYt+4icCxeQH9pyOQR/C3UEvje8c9jAgN9+IxmsWAHPIE2fwgV9FxF/w8si4CrWDYqq5sIhX4BGoKWb0IgE4gAAAAASUVORK5CYII=">';let storage=new function(){this.wallet='';this.address='';this.tx='';this.time=0;this.load=function(){if(!storage.hasData())
-return;let data=JSON.parse(localStorage[NETWORK.provider]);storage.wallet=data.wallet;storage.address=data.address;storage.time=data.time};this.save=function(){localStorage[NETWORK.provider]=storage.wallet!=''?JSON.stringify({'wallet':storage.wallet,'address':storage.address,'tx':storage.tx,'time':storage.time}):''};this.hasData=function(){return(typeof localStorage[NETWORK.provider]!=='undefined'&&localStorage[NETWORK.provider]!='')};this.hasStorage=function(){return(typeof(Storage)!=="undefined")};this.clear=function(){storage.wallet='';storage.address='';storage.tx='';localStorage.removeItem(NETWORK.provider)};this.reset=function(){storage.address='';storage.time=0}}
-let abi=new function(){this.contents=[{'name':'Baccarat','abi':[{"constant":!1,"inputs":[],"name":"terminate","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!0,"inputs":[],"name":"openCards","outputs":[{"name":"","type":"uint64"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_seed","type":"uint256"}],"name":"update","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_value","type":"uint256"}],"name":"withdrawal","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerDepositWeight","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[],"name":"bankerReserve","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"transferFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"state","outputs":[{"name":"","type":"uint8"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerMax","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"betPrice","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_slot","type":"uint8"},{"name":"_multi","type":"uint8"}],"name":"bet","outputs":[{"name":"","type":"address[]"}],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"information","outputs":[{"name":"","type":"uint256[3]"},{"name":"","type":"uint8"},{"name":"","type":"uint64[]"},{"name":"","type":"uint64"},{"name":"","type":"uint256"},{"name":"","type":"int256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankersWithdrawlFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"anonymous":!1,"inputs":[{"indexed":!1,"name":"","type":"uint256[3]"},{"indexed":!1,"name":"","type":"uint8"},{"indexed":!1,"name":"","type":"uint64[]"},{"indexed":!1,"name":"","type":"uint64"}],"name":"eventUpdate","type":"event"}],'address':['0xa44697053ebc9beffed873f2ea3a015c4654e8d5'],'contracts':{},'informations':{}},{'name':'Dragon Tiger','abi':[{"constant":!1,"inputs":[],"name":"terminate","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!0,"inputs":[],"name":"openCards","outputs":[{"name":"","type":"uint64"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_seed","type":"uint256"}],"name":"update","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_value","type":"uint256"}],"name":"withdrawal","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerDepositWeight","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[],"name":"bankerReserve","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"transferFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"state","outputs":[{"name":"","type":"uint8"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerMax","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"betPrice","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_slot","type":"uint8"},{"name":"_multi","type":"uint8"}],"name":"bet","outputs":[{"name":"","type":"address[]"}],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"information","outputs":[{"name":"","type":"uint256[3]"},{"name":"","type":"uint8"},{"name":"","type":"uint64[]"},{"name":"","type":"uint64"},{"name":"","type":"uint256"},{"name":"","type":"int256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankersWithdrawlFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"anonymous":!1,"inputs":[{"indexed":!1,"name":"","type":"uint256[3]"},{"indexed":!1,"name":"","type":"uint8"},{"indexed":!1,"name":"","type":"uint64[]"},{"indexed":!1,"name":"","type":"uint64"}],"name":"eventUpdate","type":"event"}],'address':['0xc47a0c20f0527bb69133e52cc8491a4590f26623'],'contracts':{},'informations':{}},{'name':'High Low','abi':[{"constant":!1,"inputs":[],"name":"terminate","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!0,"inputs":[],"name":"openCards","outputs":[{"name":"","type":"uint64"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_seed","type":"uint256"}],"name":"update","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_value","type":"uint256"}],"name":"withdrawal","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerDepositWeight","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[],"name":"bankerReserve","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"transferFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"state","outputs":[{"name":"","type":"uint8"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankerMax","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"betPrice","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!1,"inputs":[{"name":"_slot","type":"uint8"},{"name":"_multi","type":"uint8"}],"name":"bet","outputs":[{"name":"","type":"address[]"}],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"information","outputs":[{"name":"","type":"uint256[3]"},{"name":"","type":"uint8"},{"name":"","type":"uint64[]"},{"name":"","type":"uint64"},{"name":"","type":"uint256"},{"name":"","type":"int256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"},{"name":"","type":"address[]"},{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"bankersWithdrawlFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"anonymous":!1,"inputs":[{"indexed":!1,"name":"","type":"uint256[3]"},{"indexed":!1,"name":"","type":"uint8"},{"indexed":!1,"name":"","type":"uint64[]"},{"indexed":!1,"name":"","type":"uint64"}],"name":"eventUpdate","type":"event"}],'address':['0x1f072e78ae13fceaa085b75a723fbd0c31373055'],'contracts':{},'informations':{}},{'name':'Lotto 953','abi':[{"constant":!1,"inputs":[],"name":"terminate","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_price","type":"uint256"}],"name":"setTicketPrice","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_tickets","type":"uint128[]"}],"name":"buy","outputs":[{"name":"","type":"uint128[]"}],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!1,"inputs":[{"name":"_seed","type":"uint256"}],"name":"update","outputs":[],"payable":!1,"stateMutability":"nonpayable","type":"function"},{"constant":!1,"inputs":[{"name":"_value","type":"uint256"}],"name":"withdrawal","outputs":[],"payable":!0,"stateMutability":"payable","type":"function"},{"constant":!0,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"transferFee","outputs":[{"name":"","type":"uint256"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"state","outputs":[{"name":"","type":"uint8"}],"payable":!1,"stateMutability":"view","type":"function"},{"constant":!0,"inputs":[],"name":"information","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint8"},{"name":"","type":"uint256[]"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint128[]"}],"payable":!1,"stateMutability":"view","type":"function"},{"anonymous":!1,"inputs":[{"indexed":!1,"name":"","type":"uint256"},{"indexed":!1,"name":"","type":"uint8"},{"indexed":!1,"name":"","type":"uint256[]"}],"name":"eventUpdate","type":"event"}],'address':['0xf898666033659de98c43f45dcfda348d93573c76'],'contracts':{},'informations':{}}];this.transaction=null;this.start=function(){for(let i=0;i<abi.contents.length;i++)
-if(wallet.web3!=null)
-for(let j=0;j<abi.contents[i].address.length;j++)
-abi.contents[i].contracts[abi.contents[i].address[j]]=wallet.web3.eth.contract(abi.contents[i].abi).at(abi.contents[i].address[j]);else abi.contents[i].contracts={};abi.transaction=null};this.isValidate=function(game,contract){for(let i=0;i<abi.contents.length;i++)
-for(let j=0;j<abi.contents[i].address.length;j++)
-if(game==i&&contract==abi.contents[i].address)
-return!0;return!1};this.getABI=function(game,contract){$.getJSON(NETWORK['.ethscan']+'/api?module=contract&action=getabi&address='+NETWORK.contract,function(game,contract,data){let temp=JSON.parse(data.result);if(temp!='')
-abi.contents[game].contracts[contract]=wallet.web3.eth.contract(temp).at(contract)})};this.makeUpdateEvent=function(game,contract){abi.contents[game].contracts[contract].eventUpdate(function(e,r){abi.information(game,contract,function(_game,_contract,_data){page.updateContents(_game,_contract,_data)})})};this.makeTransaction=function(game,contract,password){abi.transaction=function(data,callback){if(storage.address==''||abi.contents[game].contracts[contract]==null)
-return;wallet.sendTransaction(contract,password,parseFloat(wallet.web3.fromWei(abi.contents[game].informations[contract][3],'ether')),data)}};this.bet=function(game,contract,slot,callback){if(abi.contents[game].contracts[contract]!=null&&abi.transaction!=null&&game<3)
-abi.transaction(ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("bet(uint8)",slot)),callback)};this.buy=function(game,contract,tickes,callback){if(abi.contents[game].contracts[contract]!=null&&abi.transaction!=null&&game==3)
-abi.transaction(ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("buy(uint128[])",tickes)),callback)};this.information=function(game,contract,callback){if(abi.contents[game].contracts[contract]!=null)
-abi.contents[game].contracts[contract].information(function(e,r){if(!e){abi.contents[game].informations[contract]=r;callback(game,contract,r)}})}}
-let wallet=new function(){this.web3=null;this.ETH=0;this.stateBackup=-1;this.timer=1800000;this.showEthNetwork=function(){wallet.web3.version.getNetwork((e,r)=>{switch(r){case "1":console.log('This is mainnet');break;case "2":console.log('This is the deprecated Morden test network.');break;case "3":console.log('This is the ropsten test network.');break;default:console.log('This is an unknown network.('+r+')')}})};this.state=function(){if(storage.hasStorage()&&storage.hasData()&&storage.wallet!=''){if(storage.address!=='')
-return 2;else return 1}
-return 0};this.start=function(){if(!storage.hasStorage())
-$('#top-alert').html('<div class="alert alert-warning" role="alert">This browser is not support storage!</div>');else if(storage.hasData()){storage.load();wallet.state();wallet.updateTimer(!0)}else{storage.wallet='';storage.reset();storage.save()}
-const engine=ZeroClientProvider({getAccounts:function(){},rpcUrl:NETWORK.provider});wallet.web3=new Web3(engine);wallet.showEthNetwork();abi.start();page.start();engine.on('block',wallet.updateBlock)};this.updateBlock=function(block){wallet.updateTimer(!1);let tempState=wallet.state();if(tempState==2)
-wallet.updateBalance(function(balance){wallet.ETH=balance;$('#walletBalance').html(wallet.ETH+' e')});else $('#walletBalance').html('');wallet.update();page.update();wallet.stateBackup=tempState};this.updateTimer=function(update){let time=new Date().getTime();if(wallet.state()!=2)
-return;if(time>parseInt(storage.time)+wallet.timer){storage.reset();page.enter()}else if(update)
-storage.time=time;storage.save()};this.update=function(){switch(wallet.state())
-{case 0:$('#walletBalance').html('');$('#mainNavWallet').html('');$('#mainNavAccount').html('<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletCreate()">Create</a>'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletRestore()">Restore</a>');break;case 1:$('#walletBalance').html('');$('#mainNavWallet').html('');$('#mainNavAccount').html('<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.logIn()">Login</a>');break;case 2:wallet.web3.eth.defaultAccount=storage.address;wallet.web3.settings.defaultAccount=storage.address;wallet.updateBalance(function(balance){wallet.ETH=balance;$('#walletBalance').html(wallet.ETH+' e')});$('#mainNavWallet').html('<li class="nav-item dropdown">'+'<a class="nav-link dropdown-toggle" style="cursor:hand" id="navbarDropdownMenuWallet" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">account_balance_wallet</i></a>'+'<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuWallet" id="mainNavWallet">'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletDeposit()">Deposit</a>'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletWithrawal()">Withrawal</a>'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletHistory()">History</a>'+'</div></li>');$('#mainNavAccount').html('<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletExport()">Export</a>'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.walletDestroy()">Destroy</a>'+'<div class="dropdown-divider"></div>'+'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modalDialog" onClick="script:wallet.logOut()">Logout</a>');break}};this.updateBalance=function(callback){wallet.web3.eth.getBalance(storage.address,function(e,r){if(!e)callback(wallet.web3.fromWei(r.toNumber(),'ether'))})};this.walletCreate=function(){if(!storage.hasStorage()){page.modalUpdate('Create Fail','This browser is not support storage!');return}
-let body='<div style="overflow-x:auto;">'+'<center>Create wallet from <b>'+NETWORK.name+'</b></center>'+'<center>Wallet data in your computer only.</center>'+'<center>If you clean up your browser. Be removed wallet data permanently too.</center><br/>'+'<div class="input-group"><input id="pssword1" type="password" class="form-control" placeholder="Password (Over 8 letters)" aria-label="password" aria-describedby="pssword1"></div><br>'+'<div class="input-group"><input id="pssword2" type="password" class="form-control" placeholder="Password retype" aria-label="password retype" aria-describedby="pssword2">'+'</div></div>';page.modalUpdate('Create',body,'wallet.walletCreateOK()');page.modalAlert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And must backup your wallet.</center></div>')};this.getPrivateKeyString=function(password){let privateKey=null;try{let temp=keythereum.recover(password,JSON.parse(storage.wallet));privateKey=Array.prototype.map.call(temp,x=>('00'+x.toString(16)).slice(-2)).join('')}catch(e){privateKey=null}
-return privateKey};this.getPrivateKeyBuffer=function(password){let privateKey=null;try{privateKey=keythereum.recover(password,JSON.parse(storage.wallet))}catch(e){privateKey=null}
-return privateKey};this.walletCreateOK=function(){let p1=$('#pssword1').val();let p2=$('#pssword2').val();if(p1===p2&&p1.length>7){let dk=keythereum.create();let keyObject=keythereum.dump(p1,dk.privateKey,dk.salt,dk.iv);keyObject.isMainNet=NETWORK.isMainNet;storage.wallet=JSON.stringify(keyObject);storage.reset();storage.save();wallet.update();page.update();page.modalUpdate('Create','Success create your new account.');page.modalAlert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And must backup your wallet.</center></div>')}else{if(p1!=p2){page.modalAlert('<div class="alert alert-warning" role="alert">Retype password is not same</div>')}else{page.modalAlert('<div class="alert alert-warning" role="alert">Too short password</div>')}}}
-this.walletRestore=function(){if(!storage.hasStorage()){page.modalUpdate('Restore Fail','This browser is not support storage!');return}
-let body='<div style="overflow-x:auto;">'+'<div class="input-group"><input id="restore-string" type="text" class="form-control" placeholder="Backup string" aria-label="Backup string" aria-describedby="restore-string"></div><br>'+'<div class="input-group"><input id="restore-password" type="password" class="form-control" placeholder="Password" aria-label="Restore password" aria-describedby="restore-password"></div>'+'</div>';page.modalUpdate('Restore',body,'wallet.walletRestoreOK()')};this.walletRestoreOK=function(){let password=$('#restore-password').val();let keyObject=JSON.parse($('#restore-string').val());try{let privateKey=keythereum.recover(password,keyObject);storage.wallet=JSON.stringify(keyObject);storage.reset();storage.save();page.modalUpdate('Restore','Restore wallet complete')}catch(e){if(password!=''&&restore!='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');else if(restore=='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Restore string is empty</div>');else if(password=='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Restore password is empty</div>')}};this.walletDestroy=function(){let body='<p class="text-danger">Destroy Wallet.</p>'+'<div style="overflow-x:auto;">'+'<div class="input-group"><input id="destory-password" type="password" class="form-control" placeholder="Password" aria-label="destory password" aria-describedby="destory-password"></div>'+'</div>';page.modalUpdate('Destory',body,'wallet.walletDestroyOK()')};this.walletDestroyOK=function(){let password=$('#destory-password').val();try{keythereum.recover(password,JSON.parse(storage.wallet));storage.clear();wallet.logOutOK();page.modalUpdate('Destory','Destory wallet complete')}catch(e){if(password!='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');else page.modalAlert('<div class="alert alert-warning" role="alert">Password is empty</div>')}};this.walletExport=function(){wallet.updateTimer(!0);let body='<div style="overflow-x:auto;">'+'<div class="input-group"><input id="export-password" type="password" class="form-control" placeholder="Password" aria-label="Export password" aria-describedby="export-password"></div>'+'</div>';page.modalUpdate('Export Wallet',body,'wallet.walletExportOK()')};this.walletExportOK=function(){let password=$('#export-password').val();try{let privateKey=keythereum.recover(password,JSON.parse(storage.wallet));page.modalUpdate('Export Wallet','<div style="overflow-x:auto;"><small>'+storage.wallet+'</small></div>')}catch(e){if(re=='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is empty</div>');else page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong</div>')}};this.walletDeposit=function(){wallet.updateTimer(!0);let body='<div align="center"><p class="text-warning">!! WARNING! THIS NETWORK IS '+NETWORK.name+' !!</p></div>';body+="<div align='center'><img src='https://api.qrserver.com/v1/create-qr-code/?data="+storage.address+"&size=256x256 alt='' width='256' height='256'/></div><br/>";body+="<div align='center'><a class='text-primary' target='_blank' href='"+NETWORK.ethscan+"/address/"+storage.address+"'>"+storage.address+"</a></div>";page.modalUpdate('Deposit',body)};this.walletWithrawal=function(){wallet.updateTimer(!0);let body='<div style="overflow-x:auto;">'+'<div class="input-group"><input id="withrawal-address" type="text" class="form-control" placeholder="Withrawal Address" aria-label="Withrawal Address" aria-describedby="withrawal-address"></div><br>'+'<div class="input-group"><input id="withrawal-amount" type="number" step="any" class="form-control" placeholder="Withrawal Amount" aria-label="Withrawal Amount" aria-describedby="withrawal-amount"></div><br>'+'<div class="input-group"><input id="withrawal-password" type="password" class="form-control" placeholder="Password" aria-label="Withrawal Password" aria-describedby="withrawal-password"></div>'+'</div>';page.modalUpdate('Withrawal',body,'wallet.walletWithrawalOK()')};this.walletWithrawalOK=function(){let address=$('#withrawal-address').val();let amount=$('#withrawal-amount').val();let password=$('#withrawal-password').val();if(address==''||amount==0||amount==''||password==''||!wallet.web3.isAddress(address)||address==storage.address){if(!wallet.web3.isAddress(address))page.modalAlert('<div class="alert alert-warning" role="alert">Address is wrong</div>');else if(address=='')page.modalAlert('<div class="alert alert-warning" role="alert">Address is empty</div>');else if(amount==0||amount=='')page.modalAlert('<div class="alert alert-warning" role="alert">Withrawal is zero</div>');else if(password=='')page.modalAlert('<div class="alert alert-warning" role="alert">Passward is empty</div>');else if(address==storage.address)page.modalAlert('<div class="alert alert-warning" role="alert">This is your address</div>')}else{wallet.updateBalance(function(balance){if(balance>parseInt(amount)){if(storage.tx!=''){wallet.web3.eth.getTransaction(storage.tx,function(e,r){if(!e)
-if(r.blockNumber==null||parseInt(r.blockHash)==0)
-page.modalAlert('<div class="alert alert-warning" role="alert">Transaction is pending : <br/><small><a target="_blank" href="'+NETWORK.ethscan+'/tx/'+storage.tx+'">'+storage.tx+'</a></small></div>');else{storage.tx='';storage.save();if(!wallet.sendTransaction(address,password,amount))
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong</div>')}
-else page.modalAlert('<div class="alert alert-warning" role="alert">Transaction fail</div>')})}else{if(!wallet.sendTransaction(address,password,amount))
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong</div>')}}else{page.modalAlert('<div class="alert alert-warning" role="alert">Amount is too big. Less then '+balance+' Eth</div>')}})}};this.sendTransaction=function(address,password,amount,data=null,gasLimit=21000){let privateKey=wallet.getPrivateKeyString(password);if(privateKey!=null){wallet.web3.eth.getGasPrice(function(e,r){if(e!=null){page.modalAlert('<div class="alert alert-warning" role="alert">Network error - getGasPrice</div>')}else{let gasPrice=wallet.web3.toHex(r.toNumber());wallet.web3.eth.getTransactionCount(storage.address,function(e,t){if(e!=null){page.modalAlert('<div class="alert alert-warning" role="alert">Network error - getTransactionCount</div>')}else{let txParams={'nonce':wallet.web3.toHex(parseInt(t)),'gasPrice':gasPrice,'gasLimit':wallet.web3.toHex(gasLimit),'to':address,'value':wallet.web3.toHex(wallet.web3.toWei(amount,'ether'))};if(data!=null)
-txParams.data=data;let tx=new ethereumjs.Tx(txParams);tx.sign(new ethereumjs.Buffer.Buffer(privateKey,'hex'));wallet.web3.eth.sendRawTransaction('0x'+tx.serialize().toString('hex'),function(e,r){if(e)page.modalUpdate('Withrawal Fail',e);else{page.modalUpdate('Withrawal Success','<small><a target="_blank" href="'+NETWORK.ethscan+'/tx/'+r+'">'+r+'</a></small>');storage.tx=r}})}})}});return!0}
-return!1};this.walletHistory=function(){wallet.updateTimer(!0);page.modalUpdate('Transaction History',"Now Loading");let jsonUrl=NETWORK.ethscan+"/api?module=account&action=txlist&address="+storage.address+"&startblock=0&endblock=latest";$.getJSON(jsonUrl,function(data){if(data.result.length==0)
-page.modalUpdate('Transaction History',data.message);else{let table="<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";for(i=data.result.length-1;i>=0;i--){let date=new Date(data.result[i].timeStamp*1000);let tx='<a target="_blank" href="'+NETWORK.ethscan+'/tx/'+data.result[i].hash+'">'+data.result[i].hash+'</a>';let from='<a target="_blank" href="'+NETWORK.ethscan+'/address/'+data.result[i].from+'">'+data.result[i].from+'</a>';let to='<a target="_blank" href="'+NETWORK.ethscan+'/address/'+data.result[i].to+'">'+data.result[i].to+'</a>';let value=wallet.web3.fromWei(data.result[i].value,'ether');if(data.result[i].from==storage.address){value*=-1;table+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>"}else{table+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td align='right'>"+value+" ETH</td></tr>"}}
-table+="</tbody></table></div>";page.modalUpdate('Transaction History',table)}})};this.logIn=function(){let body='<div style="overflow-x:auto;">'+'<div class="input-group"><input id="login-password" type="password" class="form-control" placeholder="Password" aria-label="login password" aria-describedby="login-password"></div>'+'</div>';page.modalUpdate('Login',body,'wallet.logInOK()')};this.logInOK=function(){let password=$('#login-password').val();try{keythereum.recover(password,JSON.parse(storage.wallet));wallet.loginWithPK()}catch(e){if(password!='')
-page.modalAlert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');else page.modalAlert('<div class="alert alert-warning" role="alert">Password is empty</div>')}}
-this.loginWithPK=function(){wallet.web3.version.getNetwork((e,r)=>{let data=JSON.parse(storage.wallet);if((r==1&&data.isMainNet)||(r==3&&!data.isMainNet)){wallet.web3.eth.defaultAccount='0x'+data.address;wallet.web3.settings.defaultAccount='0x'+data.address;storage.reset();storage.address='0x'+data.address;storage.time=new Date().getTime();storage.save();wallet.update();page.update();page.modalUpdate('Login','Login Success')}else{page.modalUpdate('Login','Login Fail');return}})};this.logOut=function(){page.modalUpdate('Logout','Are you sure?','wallet.logOutOK()')};this.logOutOK=function(){wallet.web3=null;storage.reset();storage.save();page.modalUpdate('Logout','See you next time.');wallet.start();if(page.parameter.game!=-1||page.parameter.contract!='')
-setTimeout(function(){page.enter()},2000)}};let page=new function(){this.historyRow=6;this.historyCol=140;this.casinoGame=null;this.lotto={};this.parameter={'game':-1,'contract':''};this.modalUpdate=function(title,body,foot='',alert=''){$('#modalTitle').html(title);$('#modalAlert').html(alert);$('#modalBody').html(body);$('#modalFooter').html(foot===''?'<button type="button" class="btn btn-primary" data-dismiss="modal">Dismiss</button>':'<button type="button" class="btn btn-primary" onClick="script:'+foot+'">Confirm</button><button type="button" class="btn btn-primary" data-dismiss="modal">Dismiss</button>')};this.modalAlert=function(alert=''){$('#modalAlert').html(alert)};this.start=function(){let url=new URL(location.href);let g=parseInt(url.searchParams.get("g"));let c=url.searchParams.get("c");if(g!=null,c!=null)
-page.parameter={'game':g,'contract':c};if(abi.isValidate(g,c))
-page.game();else if(page.parameter.game==-1||page.parameter.contract=='')
-page.front();else{$('#top-alert').html('<div class="alert alert-warning" role="alert">Invidate parameters move to top page</div>');setTimeout(function(){page.enter()},2000)}
-page.resize()};this.update=function(){if(page.parameter.game==-1||page.parameter.contract==''){for(let i=0;i<abi.contents.length;i++)
-for(let j=0;j<abi.contents[i].address.length;j++){let address=abi.contents[i].address[j];abi.information(i,address,function(_game,_contract,_data){page.updateContents(_game,_contract,_data)});if(i<3)
-$('#infobtn_'+i+'_'+address).html(page.titleButtonCasino(i,address));else $('#infobtn_'+i+'_'+address).html(page.titleButtonLotto(i,address))}}else{abi.information(page.parameter.game,page.parameter.contract,function(_game,_contract,_data){page.updateContents(_game,_contract,_data)})}};this.enter=function(game=-1,contract=''){storage.save();if(wallet.state()!=2||(game==-1||contract==''))
-location.href=location.origin;else location.href=location.origin+'/?g='+game+'&c='+contract};this.front=function(){let body='<br/>';body+=page.topContentsLotto(3);body+="<p/>";body+=page.topContents(0);body+="<p/>";body+=page.topContents(1);body+="<p/>";body+=page.topContents(2);$('#contentsBody').html(body+'<br/>')};this.titleButtonLotto=function(game,address){let title='';title+='<button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="script:page.showHistoryLotto()"><i class="material-icons" style="font-size:20px;">history</i></button>';title+='<button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="page.information('+game+',\''+address+'\')"><i class="material-icons" style="font-size:20px;">announcement</i></button>';if(wallet.state()==2)
-title+='<button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="script:page.ticketLotto('+game+')"><i class="material-icons" style="font-size:20px;">create</i></button>';return title};this.topContentsLotto=function(game){let body='<div class="card bg-light"><div class="card-body">';body+='<h4 class="card-title font-weight-bold">'+abi.contents[game].name+'<small><button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="script:page.help('+game+')"><i class="material-icons" style="font-size:16px;">help</i></button></small></h4>';body+='<table style="width:100%"><tr><td id="infoLotto'+game+'">Round</td><td style="float:right;"><small id="infobtn_'+game+'_'+abi.contents[game].address[0]+'"></small></td></tr></table>';body+="<div class='row'>";for(let i=0;i<6;i++){body+='<div class="col-md-2 panel" id="lottoStat_'+i+'"><div id="lottoRoundT_'+i+'"></div><div id="lottoRound_'+i+'">Round</div><div class="card-text"><table class="border border-secondary" style="width:100%;border-collapse: collapse;">';for(let j=0;j<3;j++){body+='<tr>';for(let k=0;k<3;k++)
-if((j*3+k)%2==0)
-body+="<td style='align-middle width:33%;' bgcolor='#DEDEDE'><div align='center' valign='middle' id='lotto_"+i+"_"+(j*3+k)+"'>&nbsp</div></td>";else body+="<td style='align-middle width:33%;' class='bg-light'><div align='center' valign='middle' id='lotto_"+i+"_"+(j*3+k)+"'>&nbsp</div></td>";body+='</tr>'}
-body+='</table></div></div>'}
-body+='</div>';body+='</div></div>';return body};this.topContents=function(game){let body='<div class="card bg-light"><div class="card-body">';body+='<h4 class="card-title font-weight-bold">'+abi.contents[game].name+'<small><button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="script:page.help('+game+')"><i class="material-icons" style="font-size:16px;">help</i></button></small></h4>';for(let i=0;i<abi.contents[game].address.length;i++){body+=page.historyTable(game,abi.contents[game].address[i]);if(i<abi.contents[game].length-1)
-body+="&nbsp<br/>"}
-body+='</div></div>';return body};this.titleButtonCasino=function(game,address){let title='<button data-toggle="modal" data-target="#modalDialog" type="button" class="btn btn-primary btn-sm text-secondary" onClick="page.information('+game+',\''+address+'\')"><i class="material-icons" style="font-size:20px;">announcement</i></button>';if(wallet.state()==2)
-title+='<button type="button" class="btn btn-primary btn-sm text-secondary" onClick="script:page.enter('+game+',\''+address+'\')">'+iCard+'</button>';return title};this.historyTable=function(game,address){let table='';if(page.parameter.game==-1||page.parameter.contract=='')
-table+='<table style="width:100%"><tr><td id="infotitle_'+game+'_'+address+'">Round</td><td style="float:right;" id="infobtn_'+game+'_'+address+'"><small>'+page.titleButtonCasino(game,address)+'</small></td></tr></table>';table+="<div id='history_"+game+'_'+address+"'><div style='overflow-x:auto;'><table class='border border-secondary'>";for(let i=0;i<page.historyRow;i ++){table+="<tr>";for(let j=0;j<page.historyCol;j++)
-if((i*3+j)%2==0)
-table+="<td class='align-middle' bgcolor='#DEDEDE'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";else table+="<td class='align-middle bg-light'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";table+="</tr>"}
-table+="</table></div></div>";return table};this.getGameState=function(state){let result='';switch(state){case 0:result="Ready";break;case 1:result="Open";break;case 2:result="Close";break;case 3:result="Draw";break}
-return result};this.help=function(game){let rule="Now loading..."
-switch(game){case 0:rule='Baccarat is a card game that is dealt from a shoe that holds 6 or 8 decks of cards. Two hands are dealt by the house dealer, the "banker" hand and the "player" hand. Before the hands are dealt, bets may be placed on the banker hand, on the player hand, or on a tie.';break;case 1:rule='Dragon Tiger is about as simple as gambling gets. It is basically a two-card version of baccarat. To be more specific, two cards are drawn, one to the Dragon and one to the Tiger. The player bets on which one will be higher. There are also some proposition bets on the individual cards.';break;case 2:rule='It is a simple game where the player bets whether the next card in the deck will be higher or lower than the current card. The odds are roughly commensurate with the probability of winning.';break;case 3:break}
-page.modalUpdate('About '+abi.contents[game].name,rule)};this.information=function(game,address){page.modalUpdate(abi.contents[game].name,"Now loading....");wallet.updateTimer(!0);abi.information(game,address,function(_game,_address,_data){let table="<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";table+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+NETWORK.ethscan+'/address/'+_address+'\',\'_blank\')"><small>'+_address+"</small></td></tr>";table+="<tr><td>State</td><td>"+page.getGameState(parseInt(_data[1]))+"</td></tr>";if(game!=3){table+="<tr><td>Round</td><td>"+_data[0][0]+"-"+_data[0][1]+"-"+_data[0][2]+"</td></tr>";table+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";table+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[6])+" ETH</td></tr>";table+="<tr><td>Pending transfer</td><td>"+_data[11]+" remains</td></tr>";table+="<tr><td>Bankers Deposit</td><td>"+wallet.web3.fromWei(_data[7])+" ETH </td></tr>";table+="<tr><td>Bankers</td><td>"+_data[8].length+" / "+_data[9].toNumber()+" accounts </td></tr>";table+="<tr><td>Waitings</td><td>"+_data[10].length+" accounts </td></tr>"}else{table+="<tr><td>Round</td><td>"+_data[0]+"</td></tr>";table+="<tr><td>Price</td><td>"+wallet.web3.fromWei(_data[3])+" ETH</td></tr>";table+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";table+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[5])+" ETH</td></tr>";table+="<tr><td>Pending transfer</td><td>"+_data[6]+" remains</td></tr>";table+="<tr><td>My tickets</td><td>"+_data[7]+"</td></tr>"}
-table+="</tbody></table></div>";page.modalUpdate(abi.contents[game].name,table)})};this.updateContents=function(game,address,data){switch(game){case 0:case 1:case 2:page.historyCasino(game,address,data);if(page.parameter.game<0||page.casinoGame==null)
-page.casinoGame=null;else if(page.casinoGame!=null)
-page.casinoGame.onUpdateCasino(game,address,data);break;case 3:page.updateLotto(game,address,data);break}};this.updateLotto=function(game,address,data){page.lotto['953Round']=parseInt(data[0]);page.lotto['953History']=data[2];page.lotto['953TicketPrice']=parseInt(data[3]);page.lotto['953Balance']=parseInt(data[4]);$('#infoLotto'+game).html("Round "+page.lotto['953Round']+'<small> ('+page.getGameState(parseInt(data[1]))+')</small>');let marker=[];let max=game==3?9:0;for(let i=0;i<max;i++)
-marker.push(1<<i);for(let i=(data[2].length>6?data[2].length-6:0),k=0;i<data[2].length;i++,k++){let temp=data[2][i].toString(2);let prize=parseInt(temp.substring(0,temp.length-128),2);let bonus=parseInt(temp.substring(temp.length-128,temp.length),2);if(data[2].length<6)
-$('#lottoRound_'+k).html("Round "+(i+1));else $('#lottoRound_'+k).html("Round "+(page.lotto['953Round']-6+k));for(let j=0;j<marker.length;j++){let mark='&nbsp';if(marker[j]&prize)mark='<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>';else if(marker[j]&bonus)mark='<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>';else mark='<a style="opacity: 0.2;">&#93'+(12+j)+'</a>';$('#lotto_'+k+'_'+j).html(mark)}}};this.showHistoryLotto=function(){let marker=[];for(let i=0;i<9;i++)
-marker.push(1<<i);let table="<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";for(let i=page.lotto['953History'].length-1,k=page.lotto['953Round']-1;i>-1;i--,k--){let temp=page.lotto['953History'][i].toString(2);let prize=parseInt(temp.substring(0,temp.length-128),2);let bonus=parseInt(temp.substring(temp.length-128,temp.length),2);let numbers='';for(let j=0;j<marker.length;j++){if((marker[j]&prize)>0)numbers+='<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>';if((marker[j]&bonus)>0)bonus='<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>'}
-table+="<tr><td><div><small>R."+k+"</small></div><div><td>"+numbers+bonus+"</td></tr>"}
-table+="</tbody></table></div>";page.modalUpdate('History',table)};this.ticketLotto=function(game){let cnt=4;let max=game==3?9:0;let mark=game==3?5:0;let tickets='<table class="table">';tickets+='<thead><tr>';for(let i=0;i<cnt;i++)
-tickets+='<th scope="col">Ticket '+(i+1)+'</th>';tickets+='</tr></thead>';tickets+='<tbody>';for(let j=0;j<max+1;j++){tickets+='</tr>';for(let k=0;k<cnt;k++)
-if(j==max)
-tickets+='<td><button type="button" class="btn btn-secondary btn-sm" onClick="script:page.ticketLottoRandom('+k+','+max+','+mark+')">random</button></td>';else tickets+='<td><div class="checkbox"><input type="checkbox" id="t'+k+'_'+j+'" onClick="return page.ticketLottoMark('+k+','+max+','+mark+')"> '+(j+1)+'</div></td>';tickets+='</tr>'}
-tickets+='</tbody>';tickets+='</table>';tickets+='<div class="input-group"><input id="buyTicket-password-'+game+'" type="password" class="form-control" placeholder="Password" aria-label="Buy Ticket Password" aria-describedby="buyTicket-password-'+game+'"></div>';page.modalUpdate('Buy ticket '+abi.contents[game].name,tickets,'page.ticketLottoBuy('+game+','+cnt+','+max+','+mark+')')};this.ticketLottoMark=function(ticket,max,mark){if(page.ticketLottoMarkCount(ticket,max)>mark)
-return!1;return!0};this.ticketLottoMarkCount=function(ticket,max){let count=0;for(let i=0;i<max;i++)
-if($('#t'+ticket+'_'+i).prop('checked'))
-count++;return count};this.ticketLottoRandom=function(ticket,max,mark){let marks=[];for(let k=0;k<max;k++)
-marks.push(k);for(let i=0;i<marks.length;i++){$('#t'+ticket+'_'+i).prop('checked',!1);let s=Math.floor(Math.random()*marks.length);let b=marks[i];marks[i]=marks[s];marks[s]=b}
-for(let j=0;j<mark;j++)
-$('#t'+ticket+'_'+marks[j]).prop('checked',!0);};this.ticketLottoBuy=function(game,cnt,max,mark){let buyTicket=[];for(let i=0;i<cnt;i++){if(page.ticketLottoMarkCount(i,max)==mark){buyTicket.push(Array());for(let j=0;j<max;j++)
-if($('#t'+i+'_'+j).prop('checked'))
-buyTicket[buyTicket.length-1].push(j);}}
-let password=$('#buyTicket-password-'+game).val();let contract=abi.contents[game].contracts[abi.contents[game].address[0]];console.log("buy",game,cnt,max,mark,password,buyTicket)};this.historyCasino=function(game,address,data){let history=new Array();for(let i=0;i<data[2].length;i++)
-history.push(page.openCards(data[2][i].toNumber()));for(let i=0;i<page.historyRow;i ++)
-for(let j=0;j<page.historyCol;j++)
-$('#history_'+game+'_'+address+'_'+j+'_'+i).html('&nbsp');let red="<i class='material-icons' style='font-size:16px;color:red'>brightness_1</i>";let blue="<i class='material-icons' style='font-size:16px;color:blue'>brightness_1</i>";let green="<i class='material-icons' style='font-size:16px;color:green'>brightness_1</i>";let x1=0;let x2=0;let y=0;let b=-1;$('#infotitle_'+game+'_'+address).html("Round "+data[0][0].toNumber()+"-"+data[0][1].toNumber()+"-"+data[0][2].toNumber()+'<small> ('+page.getGameState(parseInt(data[1]))+')</small>');for(let i=0;i<history.length;i++){let temp=page.win(game,history[i]);let win=temp.win;let toolTip=temp.toolTip;if(b==win){if(y==(page.historyRow-1)||$('#history_'+game+'_'+address+'_'+x1+'_'+(y+1)).html()!='&nbsp;'){x2++}else{y++}}else if(b!=-1){x1++;x2=0;y=0}
-let marker='!';if(win==1)marker=red;else if(win==2)marker=blue;else if(win==3)marker=green;$('#history_'+game+'_'+address+'_'+(x1+x2)+'_'+y).html('<a style="cursor:hand" data-toggle="tooltip" title="'+toolTip+'">'+marker+'</a>');b=win}};this.win=function(game,openCards){let win=0;let toolTip='';switch(game){case 0:let b=(page.cut10(page.card(openCards['1st'][0]))+page.cut10(page.card(openCards['1st'][1])))%10;b=openCards['1st'][2]==0?b:(b+page.cut10(page.card(openCards['1st'][2])))%10;let p=(page.cut10(page.card(openCards['2nd'][0]))+page.cut10(page.card(openCards['2nd'][1])))%10;p=openCards['2nd'][2]==0?p:(p+page.cut10(page.card(openCards['2nd'][2])))%10;toolTip='('+b+','+p+')';win=b>p?1:b<p?2:3;break;case 1:let d=page.card(openCards['1st'][0]);let t=page.card(openCards['2nd'][0]);toolTip='('+d+','+t+')';win=d>t?1:d<t?2:3;break;case 2:let c1=page.card(openCards['1st'][0]);let c2=page.card(openCards['2nd'][0]);toolTip='('+c1+','+c2+')';win=c2>c1?1:c2<c1?2:3;break}
-return{'win':win,'toolTip':toolTip}};this.card=function(index){return(index-1)%13+1};this.cut10=function(num){return num>9?0:num};this.openCards=function(raw){return{'1st':[page.bitwise(raw,0),page.bitwise(raw,8),page.bitwise(raw,16),page.bitwise(raw,24)],'2nd':[page.bitwise(raw,32),page.bitwise(raw,40),page.bitwise(raw,48),page.bitwise(raw,56)]}};this.bitwise=function(num,from,size=8){let length=64;let str=num.toString(2);if(str.length<length)str=Array(length-str.length+1).join("0")+str;return parseInt(str.slice(length-from-size,str.length-from),2)};this.binaryString=function(num,length=64){let str=num.toString(2);if(str.length<length)str=Array(length-str.length+1).join("0")+str;return str};this.game=function(){let body='<br/><div class="card bg-light"><div class="card-body">';body+='<div><h3><a style="cursor:hand" onClick="window.open(\''+NETWORK.ethscan+'/address/'+page.parameter.contract+'\',\'_blank\')">'+abi.contents[page.parameter.game].name+'</a></h3></div>';body+='<div class="row" id="top">';body+='<div class="col-md-6 panel" id="gameFrame"><canvas id="gameCanvas" width=720 height=720 style="background: linear-gradient(to bottom, #33cc33 0%, #006600 100%)"></canvas></div>';body+='<div class="col-md-6 panel">';body+='<div id="information"><div id="line"><h6>HISTORY</h6></div>'+page.historyTable(page.parameter.game,page.parameter.contract)+'</div><br/>';body+='<div><h6>CHAT</h6></div>';body+='<div class="list-unstyled" id="chatmessage" align="left" style="overflow-y:auto;background-color:#DEDEDE;"></div>';body+='<div><input id="chatInput" type="text" class="form-control" placeholder="message"></div>';body+='</div>';body+='</div></div></div><br/>';$('#contentsBody').html(body);page.runGame()};this.resize=function(){if(page.parameter.game>-1){$("#gameCanvas").width($("#gameFrame").innerWidth()-30);$("#gameCanvas").height($("#gameCanvas").width());if(($("#gameCanvas").width()+30)==$("#top").width()){$("#chatmessage").height($("#chatmessage").width());$('#line').html('<br/><h6>HISTORY</h6>')}else{$("#chatmessage").height($("#gameCanvas").height()-$("#information").height()-$("#chatInput").height()-60);$('#line').html('<h6>HISTORY</h6>')}}};this.runGame=function(){cc.game.onStart=function(){cc.director.setDisplayStats(!1);cc.view.enableRetina(!0);cc.view.adjustViewPort(!0);cc.view.resizeWithBrowserSize(!0);cc.LoaderScene.preload(g_resources,function(){cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);page.casinoGame=new casinoScene(page.parameter.game,page.parameter.contract);abi.makeUpdateEvent(page.parameter.game,page.parameter.contract);cc.director.runScene(page.casinoGame)},cc.game)};cc.game.run()}}
+let storage	= new function() {
+	this.wallet		= '';
+	this.address		= '';
+	this.tx			= '';
+	this.time		= 0;
+	this.load		= function() {
+		if(!storage.hasData())
+			return;
+		let data	= JSON.parse(localStorage[CONFIG['network']['provider']]);
+		storage.wallet	= data.wallet;
+		storage.address	= data.address;
+		storage.time		= data.time;
+	};
+	this.save		= function() {
+		localStorage[CONFIG['network']['provider']] = storage.wallet!=''?JSON.stringify({'wallet':storage.wallet,'address':storage.address,'tx':storage.tx,'time':storage.time}):'';
+	};
+	this.hasData		= function() {
+		return (typeof localStorage[CONFIG['network']['provider']] !== 'undefined' && localStorage[CONFIG['network']['provider']] != '');
+	};
+	this.hasStorage	= function() {
+		return (typeof(Storage) !== "undefined");
+	};
+	this.remove		= function() {
+		storage.wallet	= '';
+		storage.address	= '';
+		storage.tx		= '';
+		localStorage.removeItem(CONFIG['network']['provider']);
+	};
+	this.reset		= function() {
+		storage.address	= '';
+		storage.time		= 0;
+	};
+};
+
+let wallet	= new function() {
+	this.web3			= null;
+	this.balance			= -2;
+	this.stateBackup		= -1;
+	this.timer			= 1800000;
+	this.showEthNetwork	= function() {
+		wallet.web3.version.getNetwork((e, r) => {
+			  switch (r) {
+			    case "1":	console.log('This is mainnet');								break;
+			    case "2":	console.log('This is the deprecated Morden test network.');	break;
+			    case "3":	console.log('This is the ropsten test network.');				break;
+			    default:		console.log('This is an unknown network.('+r+')');
+			  }
+			});
+	};
+	this.state			= function() {
+		if (storage.hasStorage() && storage.hasData() && storage.wallet != '') {
+			if(storage.address!=='')
+				return 2;
+			else
+				return 1;	
+		}
+		return 0;
+	};
+	this.start			= function() {
+		if(!storage.hasStorage())
+			$('#top-alert').html('<div class="alert alert-warning" role="alert">This browser is not support storage!</div>');
+		else if(!storage.hasData()) {
+			storage.remove();
+		} else {
+			storage.load();
+			wallet.updateTimer(true);
+		}
+
+		const engine		= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
+		wallet.web3		= new Web3(engine);
+		wallet.showEthNetwork();
+		engine.on('block', wallet.updateBlock);
+	};
+	this.updateBlock		= function(block) {
+		wallet.updateTimer(false);
+		
+		let temp		= wallet.state();
+		
+		if(temp==2) {
+			wallet.web3.eth.defaultAccount		= storage.address;
+			wallet.web3.settings.defaultAccount	= storage.address;				
+			wallet.updateBalance(function(balance){/*todo*/});
+		} else
+			wallet.balance	= -1;
+
+		UPDATE();		
+		wallet.stateBackup	= temp;
+	};
+	this.updateTimer		= function(update) {
+		let time = new Date().getTime();
+		if(wallet.state()!=2)
+			return;
+		if(time > parseInt(storage.time) + wallet.timer) {
+			storage.reset();
+			storage.save();
+			location.href	= location.origin;
+		} else if(update)
+			storage.time	= time;
+		storage.save();
+	};
+	this.updateBalance			= function(callback) {
+		wallet.web3.eth.getBalance(storage.address, function(e,r){if (!e) {wallet.balance=wallet.web3.fromWei(r.toNumber(),'ether');callback(wallet.balance);}});
+	};
+
+	// create
+	this.create		= function() {
+		if(!storage.hasStorage()) {
+			modal.update('Create Fail','This browser is not support storage!');
+			return;
+		}
+
+		let body			=	'<div style="overflow-x:auto;">' +
+							'<center>Create wallet from <b>' + CONFIG['network']['name'] + '</b></center>' +
+							'<center>Wallet data in your computer only.</center>' +
+							'<center>If you clean up your browser. Be removed wallet data permanently too.</center><br/>' +
+							'<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="pass1" type="password" class="form-control" placeholder="Password (Over 8 letters)" aria-label="Password (Over 8 letters)"></div>' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="pass2" type="password" class="form-control" placeholder="Password retype" aria-label="Password retype">' +
+							'</div></div>';
+		modal.update('Create wallet',body,'wallet.createOK()');
+		modal.alert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And MUST backup your wallet.</center></div>');
+	};
+	this.getPrivateKeyString	= function(password) {
+		let privateKey	= null;
+		try {
+			let temp		= keythereum.recover(password, JSON.parse(storage.wallet));
+			privateKey	= Array.prototype.map.call(temp, x => ('00' + x.toString(16)).slice(-2)).join('');
+		} catch (e) {
+			privateKey	= null;
+		}
+		return privateKey;
+	};
+	this.getPrivateKeyBuffer	= function(password) {
+		let privateKey	= null;
+		try {
+			privateKey	= keythereum.recover(password, JSON.parse(storage.wallet));
+		} catch (e) {
+			privateKey	= null;
+		}
+		return privateKey;
+	};
+	this.createOK	= function() {
+		let p1	= $('#pass1').val();
+		let p2	= $('#pass2').val();
+
+		if(p1===p2 && p1.length > 7) {
+			let dk				= keythereum.create();
+			let keyObject		= keythereum.dump(p1, dk.privateKey, dk.salt, dk.iv);
+			
+			keyObject.isMainNet	= CONFIG['network']['isMainNet'];
+			storage.wallet		= JSON.stringify(keyObject);
+			storage.reset();
+			storage.save();
+			
+			UPDATE();
+
+			modal.update('Create','Success create your new account.');
+			modal.alert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And must backup your wallet.</center></div>');
+		} else {
+			if(p1!=p2) {
+				modal.alert('<div class="alert alert-warning" role="alert">Passwords are not same</div>');
+			} else {
+				modal.alert('<div class="alert alert-warning" role="alert">password is TOO short</div>');
+			}
+		}
+	}
+	// create
+	
+	// login&out
+	this.logIn			= function() {
+		let body			=	'<div style="overflow-x:auto;">' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="loginPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
+							'</div>';		
+		modal.update('Login',body,'wallet.logInOK()');
+	};
+	this.logInOK			= function() {
+		let password		= $('#loginPass').val();
+		
+		try {
+			keythereum.recover(password, JSON.parse(storage.wallet));
+			wallet.loginWithPK();
+		} catch (e) {
+			if(password!='')
+				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
+			else
+				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');			
+		}
+	}
+	this.loginWithPK		= function() {
+		wallet.web3.version.getNetwork((e, r) => {
+				let data	= JSON.parse(storage.wallet);
+				if((r==1&&data.isMainNet)||(r==3&&!data.isMainNet)) {
+					wallet.web3.eth.defaultAccount			= '0x'+data.address;
+					wallet.web3.settings.defaultAccount		= '0x'+data.address;
+					
+					storage.address	= '0x'+data.address;
+					storage.time		= new Date().getTime();
+					storage.save();
+
+					UPDATE();
+					
+					modal.update('Login','Login Success');
+				} else  {
+					modal.update('Login','Login Fail');
+					return;					
+				}
+			});
+	};
+	this.logOut			= function() {
+		modal.update('Logout','Are you sure?','wallet.logOutOK()');
+	};
+	this.logOutOK			= function() {
+		storage.reset();
+		storage.save();
+		UPDATE();
+
+		modal.update('Logout','See you next time.');
+
+		if(page.parameter['game']!=-1||page.parameter['contract']!='')
+			setTimeout(function(){storage.reset();storage.save();location.href	= location.origin;},2000);
+	};
+	// login&out
+	
+	// destory
+	this.destory			= function() {
+		let body			=	'<p class="text-danger">Destroy Wallet.</p>' +
+							'<div style="overflow-x:auto;">' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="destoryPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
+							'</div>';		
+		modal.update('Destory',body,'wallet.destroyOK()');
+	};
+	this.destroyOK		= function() {
+		let password		= $('#destoryPass').val();
+
+		try {
+			keythereum.recover(password, JSON.parse(storage.wallet));
+			storage.remove();
+			wallet.logOutOK();
+			modal.update('Destory','Destory wallet complete');
+		} catch (e) {
+			if(password!='')
+				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
+			else
+				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');			
+		}
+	};
+	// destory
+	
+	// export & import
+	this.export	= function() {
+		wallet.updateTimer(true);
+		let body			=	'<div style="overflow-x:auto;">' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="exportPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
+							'</div>';		
+		modal.update('Export Wallet',body,'wallet.exportOK()');
+	};
+	this.exportOK	= function() {
+		let password		= $('#exportPass').val();
+		
+		try {
+			let privateKey		= keythereum.recover(password, JSON.parse(storage.wallet));
+			modal.update('Export Wallet','<div style="overflow-x:auto;"><small>'+storage.wallet+'</small></div>');
+		} catch (e) {
+			if(re=='')
+				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');
+			else
+				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');			
+		}
+	};
+	this.restore	= function() {
+		if(!storage.hasStorage()) {
+			page.modalUpdate('Restore Fail','This browser is not support storage!');
+			return;
+		}
+
+		let body			=	'<div style="overflow-x:auto;">' +
+							'<div class="input-group mb-3"><input id="restoreStr" type="text" class="form-control" placeholder="Restore string" aria-label="Restore string"></div>' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="restorePass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
+							'</div>';		
+		modal.update('Restore',body,'wallet.restoreOK()');
+	};
+	this.restoreOK	= function() {
+		let password		= $('#restorePass').val();
+		let restore		= $('#restoreStr').val();
+		let keyObject	= JSON.parse(restore);
+		
+		try {
+			let privateKey		= keythereum.recover(password, keyObject);
+			storage.wallet		= JSON.stringify(keyObject);
+			storage.reset();
+			storage.save();
+			page.modalUpdate('Restore','Restore wallet complete');
+		} catch (e) {
+			if(password!=''&&restore!='')
+				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
+			else if(restore=='')
+				modal.alert('<div class="alert alert-warning" role="alert">Restore string is empty</div>');
+			else if(password=='')
+				modal.alert('<div class="alert alert-warning" role="alert">Restore password is empty</div>');			
+		}
+	};
+	// export & import
+	
+	// deposit & withdrawal
+	this.deposit			= function() {
+		wallet.updateTimer(true);
+		let body	= '<div align="center"><p class="text-warning">!! WARNING! THIS NETWORK IS '+CONFIG['network']['name']+' !!</p></div>';
+		body		+="<div align='center'><img src='https://api.qrserver.com/v1/create-qr-code/?data="+storage.address+"&size=256x256 alt='' width='256' height='256'/></div><br/>";
+		body		+="<div align='center'><a class='text-primary' target='_blank' href='"+CONFIG['network']['ethscan']+"/address/"+storage.address+"'>"+storage.address+"</a></div>";
+		modal.update('Deposit',body);
+	};
+	this.withrawal		= function() {
+		wallet.updateTimer(true);
+		let body			=	'<div style="overflow-x:auto;">' +
+							'<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">account_balance_wallet</i></span></div><input id="withrawalAdr" type="text" class="form-control" placeholder="Withrawal Address" aria-label="Withrawal Address"></div>' +
+							'<div class="input-group mb-3"><input id="withrawalVal" type="number" step="any" class="form-control" placeholder="Withrawal Amount" aria-label="Withrawal Amount"></div>' +
+							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="withrawalPass" type="password" class="form-control" placeholder="Password" aria-label="Withrawal Password"></div>' +
+							'</div>';
+		modal.update('Withrawal',body,'wallet.withrawalOK()');
+	};
+	this.withrawalOK		= function() {
+		let address		= $('#withrawalAdr').val();
+		let amount		= $('#withrawalVal').val();
+		let password		= $('#withrawalPass').val();
+		modal.alert('');
+		
+		if(address==''||amount==0||amount==''||password==''||!wallet.web3.isAddress(address)||address==storage.address) {
+			if(!wallet.web3.isAddress(address))	modal.alert('<div class="alert alert-warning" role="alert">Address is wrong</div>');
+			else if(address=='')					modal.alert('<div class="alert alert-warning" role="alert">Address is empty</div>');
+			else if(amount==0||amount=='')		modal.alert('<div class="alert alert-warning" role="alert">Withrawal is zero</div>');
+			else if(password=='')				modal.alert('<div class="alert alert-warning" role="alert">Passward is empty</div>');
+			else if(address==storage.address)	modal.alert('<div class="alert alert-warning" role="alert">This is your address</div>');
+		} else {
+			wallet.updateBalance(function(balance){
+				if(balance>parseInt(amount)) {
+					if(storage.tx != '') {
+						wallet.web3.eth.getTransaction(storage.tx,function(e,r){
+							if(!e)
+								if(r.blockNumber==null || parseInt(r.blockHash) == 0) 
+									modal.alert('<div class="alert alert-warning" role="alert">Transaction is pending : <br/><small><a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+storage.tx+'">'+storage.tx+'</a></small></div>');
+								else {
+									storage.tx	= '';
+									storage.save();
+									if(!wallet.sendTransaction(address,password,amount))
+										modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');									
+								}
+							else
+								modal.alert('<div class="alert alert-warning" role="alert">Transaction fail</div>');
+						});
+					} else {
+						if(!wallet.sendTransaction(address,password,amount))
+							modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
+					}
+				} else {
+					modal.alert('<div class="alert alert-warning" role="alert">Amount is too big. Less then '+balance+' Eth</div>');
+				}
+			});
+		}
+	};
+	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=21000) {
+		let privateKey	= wallet.getPrivateKeyString(password);
+
+		if(privateKey!=null) {
+			wallet.web3.eth.getGasPrice(function(e,r){
+				if(e!=null) {
+					modal.alert('<div class="alert alert-warning" role="alert">Network error - getGasPrice</div>');
+				} else {
+					let gasPrice = wallet.web3.toHex(r.toNumber());
+					wallet.web3.eth.getTransactionCount(storage.address,function(e,t){
+						if(e!=null) {
+							modal.alert('<div class="alert alert-warning" role="alert">Network error - getTransactionCount</div>');
+						} else {
+							let txParams		= {	'nonce'		:	wallet.web3.toHex(parseInt(t)),
+												'gasPrice'	:	gasPrice, 
+												'gasLimit'	:	wallet.web3.toHex(gasLimit),
+												'to'			:	address, 
+												'value'		:	wallet.web3.toHex(wallet.web3.toWei(amount, 'ether'))};
+							if(data!=null)
+								txParams['data']	= data;
+							let tx			= new ethereumjs.Tx(txParams);
+							tx.sign(new ethereumjs.Buffer.Buffer(privateKey, 'hex'));
+							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.update('Withrawal Fail',e); else {modal.update('Withrawal Success','<small><a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+r+'">'+r+'</a></small>');storage.tx=r;}});
+						}
+					});
+				}
+			});
+			return true;
+		}
+		return false;
+	};
+	// deposit & withdrawal
+	
+	// history
+	this.history			= function() {
+		wallet.updateTimer(true);
+		modal.update('Transaction History',"Now Loading");
+
+		let jsonUrl	= CONFIG['network']['ethscan']+"/api?module=account&action=txlist&address="+storage.address+"&startblock=0&endblock=latest";
+		$.getJSON(jsonUrl,function(data) {
+			if(data["result"].length==0)
+				modal.update('Transaction History',data["message"]);
+			else {
+					let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
+					
+					for(i=data["result"].length-1;i>=0;i--){
+						let date		= new Date(data["result"][i]["timeStamp"]*1000);
+						let tx		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/' + data["result"][i]["hash"] + '">'+data["result"][i]["hash"]+'</a>';
+						let from		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
+						let to		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
+						let value	= wallet.web3.fromWei(data["result"][i]["value"],'ether');
+
+						//let gas		= data["result"][i]["gas"];
+						//let gasPrice	= data["result"][i]["gasPrice"];
+						//let gasUsed	= data["result"][i]["gasUsed"];
+						//let input	= data["result"][i]["input"];						
+						//value *= (data["result"][i]["from"]==storage.address)?-1:1;
+						//table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
+						
+						if(data["result"][i]["from"]==storage.address) {
+							value *= -1;
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
+						} else {
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
+						}
+					}
+					table		+= "</tbody></table></div>";
+					modal.update('Transaction History',table);
+				}			
+			});
+	};
+	// history
+};
+
+let contracts	= new function() {
+	this.start		= function() {
+		contracts.create('lotto953');
+		contracts.create('baccarat');
+		contracts.create('dragonTiger');
+		contracts.create('highLow');
+	};
+	this.create		= function(game) {
+		for(let i=0;i<CONFIG[game]['address'].length;i++)
+			CONFIG[game]['contracts'][CONFIG[game]['address'][i]]	= wallet.web3.eth.contract(CONFIG[game]['abi']).at(CONFIG[game]['address'][i]);
+	};
+	this.info		= function(game,address,callback) {
+		if(CONFIG[game]['contracts'][address]!=null)
+			CONFIG[game]['contracts'][address].information(function(e,r){if (!e){CONFIG[game]['informations'][address]=r;callback(game,address,r);}});
+	};
+	this.infoArray	= function(game,address,callback) {
+		for(let i=0;i<address.length;i++)
+			contracts.info(game,address[i],callback);
+	};
+};
+
+let modal	= new function() {
+	this.update	= function(title, body, foot='', alert=''){
+		let dismiss	= '<button type="button" class="btn btn-primary" data-dismiss="modal">Dismiss</button>';
+		$('#modalTitle').html(title);
+		$('#modalAlert').html(alert);
+		$('#modalBody').html(body);
+		$('#modalFooter').html(foot===''?dismiss:'<button type="button" class="btn btn-primary" onClick="script:'+foot+'">Confirm</button>'+dismiss);
+	};
+	this.alert	= function(alert=''){
+		$('#modalAlert').html(alert);
+	};		
+};
+
+let page		= new function() {
+	this.historyRow			= 6,
+	this.historyCol			= 140,
+	this.start				= function() {
+		page.startLotto('lotto953','#historyLotto935',6,3,3);
+		page.startCasino('baccarat','#historyBaccarat');
+		page.startCasino('dragonTiger','#historyDragonTiger');
+		page.startCasino('highLow','#historyHighLow');
+	},
+	this.startLotto			= function(game,id,cnt,x,y) {
+		let body		= '';
+		let address	= CONFIG[game]['address'][0];
+
+		body			+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
+		body			+="<div class='row'>";
+		for(let i=0 ; i < cnt ; i++) {
+			body		+='<div class="col-md-'+(12/cnt)+' panel"><div id="round_'+game+'_'+address+'_'+i+'">Round</div><div class="card-text">';
+			body		+='<table class="border border-secondary" style="width:100%;border-collapse: collapse;">';
+			for(let j=0 ; j < y ; j++) {
+				body+='<tr>';
+				for(let k=0 ; k < x ; k++)
+					if((j*x+k)%2==0)
+						body+="<td style='align-middle;' bgcolor='#DEDEDE'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>&nbsp</div></td>";
+					else
+						body+="<td style='align-middle;' class='bg-light'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>&nbsp</div></td>";
+				body+='</tr>';
+			}
+			body		+='</table></div></div>';
+		}
+		body			+='</div>';
+		body			+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
+		
+		$(id).html(body);		
+	},
+	this.startCasino			= function(game,id) {
+		let body		= '';
+		
+		for(let i=0;i<CONFIG[game]['address'].length;i++) {
+			let address	= CONFIG[game]['address'][i];
+
+			body		+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
+			body		+="<div style='overflow-x:auto;'><table class='border border-secondary'>";
+			for(let i = 0 ; i < page.historyRow ; i ++){
+				body +="<tr>";
+				for(let j = 0 ; j < page.historyCol ; j++)
+					if((i*3+j)%2==0)
+						body	+="<td class='align-middle' bgcolor='#DEDEDE'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
+					else
+						body	+="<td class='align-middle bg-light'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
+				body	+="</tr>";
+			}
+			body		+="</table></div>";
+			body		+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
+		}
+		
+		$(id).html(body);		
+	},
+	this.updateBtn			= function(game,address) {
+		let btn		= '<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">announcement</i></button>';
+		
+		// todo : more lotto
+		switch(game) {
+		case 'lotto953':
+			btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showHistory(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">history</i></button>'+btn;
+			if(wallet.state()==2)
+				btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.ticket(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
+		break;
+		default:
+			if(wallet.state()==2)
+				btn	='<button type="button" class="btn btn-link btn-sm text-secondary" onClick="page.play(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
+			break;
+		}
+		// todo : more lotto		
+		
+		return	btn;
+	},
+	this.showInfo		= function(game,address) {
+		modal.update(CONFIG[game]['name'],'Now Loading...');
+		wallet.updateTimer(true);
+
+		contracts.info(game,address,function(_game,_address,_data){
+				let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
+
+				table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['ethscan']+'/address/'+_address+'\',\'_blank\')"><small>'+_address+"</small></td></tr>";
+				table		+="<tr><td>State</td><td>"+util.getGameState(parseInt(_data[1]))+"</td></tr>";
+
+				if(game!='lotto953') {
+					table		+="<tr><td>Round</td><td>"+_data[0][0] +"-" + _data[0][1] +"-" + _data[0][2]+"</td></tr>";
+					table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";
+					table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[6])+" ETH</td></tr>";
+					table		+="<tr><td>Pending transfer</td><td>"+_data[11]+" remains</td></tr>";
+					table		+="<tr><td>Bankers Deposit</td><td>"+wallet.web3.fromWei(_data[7])+" ETH </td></tr>";
+					table		+="<tr><td>Bankers</td><td>"+_data[8].length+" / "+ _data[9].toNumber()+" accounts </td></tr>";
+					table		+="<tr><td>Waitings</td><td>"+_data[10].length+" accounts </td></tr>";
+				} else {
+					table		+="<tr><td>Round</td><td>"+_data[0]+"</td></tr>";
+					table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(_data[3])+" ETH</td></tr>";
+					table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";
+					table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[5])+" ETH</td></tr>";
+					table		+="<tr><td>Pending transfer</td><td>"+_data[6]+" remains</td></tr>";
+					table		+="<tr><td>My tickets</td><td>"+_data[7]+"</td></tr>";
+				}
+				
+				table		+="</tbody></table></div>";
+				modal.update(CONFIG[game]['name'],table);
+			});
+	},
+	this.showHistory= function (game,address) {
+		let marker	= [];
+		for(let i = 0 ; i < 9 ; i++)
+			marker.push(1<<i);
+		
+		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
+
+		for(let i = CONFIG[game]['informations'][address][2].length-1, k = CONFIG[game]['informations'][address][0].toNumber()-1 ; i > -1 ; i--, k--) {
+			let temp		= CONFIG[game]['informations'][address][2][i].toString(2);
+			let prize	= parseInt(temp.substring(0,temp.length-128),2);
+			let bonus	= parseInt(temp.substring(temp.length-128,temp.length),2);
+			let numbers	= '';
+
+			for(let j = 0 ; j < marker.length ; j++ ) {
+				if((marker[j]&prize)>0)	numbers +='<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>';
+				if((marker[j]&bonus)>0)	bonus	= '<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>';				
+			}
+
+			table	+="<tr><td><div><center><small>R."+k+"</small></center></div><div><td>"+numbers+"&nbsp"+bonus+"</td></tr>";
+		}
+
+		table		+= "</tbody></table></div>";
+		modal.update('History',table);
+	},
+	this.updateLotto		= function(game,address,data) {
+		$('#rnd_'+game+'_'+address).html("Round "+data[0].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
+		$('#btn_'+game+'_'+address).html(page.updateBtn(game,address));
+		$('#price_'+game+'_'+address).html("Price : "+wallet.web3.fromWei(data[3].toNumber(),'ether')+" E");
+		$('#pot_'+game+'_'+address).html("Pot : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
+		
+		let marker			= [];
+		let max				= 0;
+		
+		// todo : more lotto
+		switch(game) {
+		case 'lotto953':
+			max = 9;
+		break;
+		}
+		// todo : more lotto		
+		for(let i = 0 ; i < max ; i++)
+			marker.push(1<<i);
+
+		for(let i = (data[2].length>6 ? data[2].length-6 : 0), k = 0 ; i < data[2].length ; i++,k++)  {
+
+			let temp		= data[2][i].toString(2);
+			let prize	= parseInt(temp.substring(0,temp.length-128),2);
+			let bonus	= parseInt(temp.substring(temp.length-128,temp.length),2);
+
+			if(data[2].length<6)
+				$('#round_'+game+'_'+address+'_'+k).html("Round "+(i+1));
+			else
+				$('#round_'+game+'_'+address+'_'+k).html("Round "+(data[0].toNumber()-6+k));
+			
+			for(let j = 0 ; j < marker.length ; j++ ) {
+				let mark		= '&nbsp';
+				if(marker[j]&prize) 			mark	= '<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>'; 	// todo
+				else if(marker[j]&bonus)		mark= '<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>';	// todo 
+				else							mark= '<a style="opacity: 0.2;">&#93'+(12+j)+'</a>';					// todo
+				$('#'+game+'_'+address+'_'+k+'_'+j).html(mark);
+			}
+		}		
+	},
+	this.updateCasino	= function(game,address,data) {
+		let history = new Array();
+
+		for(let i = 0 ; i < data[2].length ; i++)
+			history.push(util.openCards(data[2][i].toNumber()));
+
+		for(let i = 0 ; i < page.historyRow ; i ++)
+			for(let j = 0 ; j < page.historyCol ; j++)
+				$('#history_'+game+'_'+address+'_'+j+'_'+i).html('&nbsp');
+
+		let red		= "<i class='material-icons' style='font-size:16px;color:red'>brightness_1</i>";
+		let blue		= "<i class='material-icons' style='font-size:16px;color:blue'>brightness_1</i>";
+		let green	= "<i class='material-icons' style='font-size:16px;color:green'>brightness_1</i>";
+
+		let x1		= 0;
+		let x2		= 0;
+		let y		= 0;
+		let b		= -1;
+
+		$('#rnd_'+game+'_'+address).html("Round "+data[0][0].toNumber()+"-"+data[0][1].toNumber()+"-"+data[0][2].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
+		$('#btn_'+game+'_'+address).html(page.updateBtn(game,address));
+		$('#price_'+game+'_'+address).html("Price : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
+		
+		for(let i = 0 ; i < history.length ; i++){
+			let 	temp		= util.win(game,history[i]);
+			let win		= temp['win'];
+			let toolTip	= temp['toolTip'];
+
+			if(b==win) {
+				if(y == (page.historyRow-1) || $('#history_'+game+'_'+address+'_'+x1+'_'+(y+1)).html()!='&nbsp;' ) {
+					x2++;
+				} else {
+					y++;
+				}
+			} else if(b!=-1) {
+				x1++;
+				x2	= 0;
+				y	= 0;
+			}
+
+			let marker		= '!';
+
+			if(win==1)		marker = red;	// banker, dragon, high
+			else if(win==2)	marker = blue;	// player, tigher, low
+			else if(win==3)	marker = green;	// tie
+
+			$('#history_'+game+'_'+address+'_'+(x1+x2)+'_'+y).html('<a style="cursor:hand" data-toggle="tooltip" title="'+toolTip+'">'+marker+'</a>');
+			//$('[data-toggle="tooltip"]').tooltip();
+
+			b = win;
+		}
+	},
+	this.updateBalance		= function() {
+		// todo : show balance
+		if(wallet.state()==2&&wallet.balance>=0)
+			console.log("page.updateBalance : " + wallet.balance);
+		else
+			console.log("page.updateBalance : " + "");
+	},
+	this.updateNavAccount	= function(state) {
+		switch(wallet.state())
+		{
+			case 0:
+				$('#navAccount').html(	'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.create()">Create</a>'+
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.restore()">Restore</a>' );					
+				break;
+			case 1:
+				$('#navAccount').html(	'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.logIn()">Login</a>' );					
+				break;
+			case 2:
+				$('#navAccount').html(	
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.deposit()">Deposit</a>' +
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.withrawal()">Withrawal</a>' +
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.history()">History</a>' +
+										'<div class="dropdown-divider"></div>' +
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.export()">Export</a>' +
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.destory()">Destroy</a>' +
+										'<div class="dropdown-divider"></div>' +
+										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.logOut()">Logout</a>' );
+				break;
+		}
+	},
+	this.ticket	= function (game,address) {
+		let cnt			= 4;
+		let max			= 0;
+		let mark			= 0;
+		
+		// todo : more lotto
+		switch(game) {
+		case 'lotto953':
+			max = 9;
+			mark= 5;
+		break;
+		}
+		// todo : more lotto		
+
+		let tickets		= '<table class="table">';
+		tickets			+='<thead><tr>';
+		for(let i=0;i<cnt;i++)
+			tickets		+='<th scope="col"><center>Ticket '+(i+1)+'</center></th>';
+		tickets			+='</tr></thead>';
+		
+		tickets			+='<tbody>';		
+		for(let j=0;j<max+1;j++) {
+			tickets			+='</tr>';
+			for(let k=0;k<cnt;k++)
+				if(j==max)
+					tickets		+='<td><center><button type="button" class="btn btn-secondary btn-sm" onClick="util.ticketLottoRandom('+k+','+max+','+mark+')">RANDOM</button></center></td>';
+				else
+					tickets		+='<td><center><div class="checkbox"><input type="checkbox" id="t'+k+'_'+j+'" onClick="return util.ticketLottoMark('+k+','+max+','+mark+')"> '+(j+1)+'</div></center></td>';
+			tickets		+='</tr>';
+		}
+		tickets			+='</tbody>';
+		tickets			+='</table>'; 
+		
+		tickets			+='<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="buyTicketPass-'+game+'" type="password" class="form-control" placeholder="Password" aria-label="Buy Ticket Password"></div>';
+
+		modal.update('Ticket '+CONFIG[game]['name'],tickets,'page.ticketBuy(\''+game+'\','+cnt+','+max+','+mark+')');
+	},
+	this.ticketBuy=function(game,cnt,max,mark) {
+		modal.alert('');
+		
+		let buyTicket = [];
+
+		for(let i=0;i<cnt;i++) {
+			if(util.ticketLottoMarkCount(i,max)==mark) {
+				buyTicket.push(Array());
+				for(let j=0;j<max;j++)
+					if($('#t'+i+'_'+j).prop('checked'))
+						buyTicket[buyTicket.length-1].push(j);
+			}
+		}
+		
+		let password		= $('#buyTicketPass-'+game).val();
+		let contract		= CONFIG[game]['contracts'][CONFIG[game]['address'][0]];
+
+		if(password=='')
+			modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');
+		else if (buyTicket.length==0)
+			modal.alert('<div class="alert alert-warning" role="alert">Marking please.</div>');
+		else {
+			let privateKey	= wallet.getPrivateKeyString(password);
+			if(privateKey==null)
+				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
+			{
+				wallet.updateBalance(function(balance){
+					contracts.info(game,CONFIG[game]['address'][0],function(_game,_address,_data){
+						if((parseInt(_data[1])!=1)) {
+							modal.alert('<div class="alert alert-warning" role="alert">Counter is not open!</div>');				
+						} else {
+							// todo : buy ticket
+							//abi.buy(3,abi.contents[game].contracts[contract],tickes,callback)
+							console.log("buy",game,cnt,max,mark,password,buyTicket,balance);
+						}
+					});
+				});
+			}
+		}
+	};
+
+	this.play		= function(game,address) {
+		console.log('play',game,address);
+		
+		//$('#modlg').modal('show');
+	}
+};
+
+let util	= new function() {
+	this.win				= function(game,openCards) {
+		let win		= 0;
+		let toolTip	= '';
+		
+		switch(game){
+			case 'baccarat':
+				let b	= (util.cut10(util.card(openCards['1st'][0]))+util.cut10(util.card(openCards['1st'][1])))%10;
+				b		= openCards['1st'][2]==0?b:(b+util.cut10(util.card(openCards['1st'][2])))%10;
+				let p	= (util.cut10(util.card(openCards['2nd'][0]))+util.cut10(util.card(openCards['2nd'][1])))%10;
+				p		= openCards['2nd'][2]==0?p:(p+util.cut10(util.card(openCards['2nd'][2])))%10;
+				toolTip = '('+b+','+p+')';
+				win 		= b>p?1:b<p?2:3;
+				break;
+			case 'dragonTiger':
+				let d	= util.card(openCards['1st'][0]);
+				let t	= util.card(openCards['2nd'][0]);
+				toolTip = '('+d+','+t+')';
+				win 		= d>t?1:d<t?2:3;
+				break;
+			case 'highLow':
+				let c1	= util.card(openCards['1st'][0]);
+				let c2	= util.card(openCards['2nd'][0]);
+				toolTip = '('+c1+','+c2+')';
+				win 		= c2>c1?1:c2<c1?2:3;
+				break;
+		}
+
+		return {'win':win,'toolTip':toolTip};
+	};
+	this.card			= function(index) {
+		return (index-1)%13+1;
+	};
+	this.cut10			= function(num) {
+		return num>9?0:num;
+	};
+	this.openCards		= function(raw) {
+		return {'1st':[util.bitwise(raw,0),util.bitwise(raw,8),util.bitwise(raw,16),util.bitwise(raw,24)],'2nd':[util.bitwise(raw,32),util.bitwise(raw,40),util.bitwise(raw,48),util.bitwise(raw,56)]};
+	};
+	this.bitwise			= function(num, from, size=8) {
+		let length	= 64;
+		let str		= num.toString(2);
+		if (str.length < length) str = Array(length - str.length + 1).join("0") + str;
+		return parseInt( str.slice(length-from-size,str.length-from), 2 );
+	};
+	this.binaryString	= function(num,length=64) {
+		let str		= num.toString(2);
+		if (str.length < length) str = Array(length - str.length + 1).join("0") + str;
+		return str;
+	};
+	this.getGameState	= function (state) {
+		let result	= '';
+		switch(state) {
+		case 0:
+			result = "Ready";
+			break;
+		case 1:
+			result = "Open";
+			break;
+		case 2:
+			result = "Close";
+			break;
+		case 3:
+			result = "Game";
+			break;
+		}
+		return result;
+	};
+	this.ticketLottoMark	= function (ticket,max,mark) {
+		if(util.ticketLottoMarkCount(ticket,max)>mark)
+			return false;
+		return true;
+	};
+	this.ticketLottoMarkCount = function (ticket,max) {
+		let count = 0;
+		for(let i=0;i<max;i++)
+			if($('#t'+ticket+'_'+i).prop('checked'))
+				count++;
+		return count;
+	};
+	this.ticketLottoRandom=function (ticket,max,mark) {
+		let marks	= [];
+		
+		for(let k=0;k<max;k++)
+			marks.push(k);
+
+		for(let i=0;i<marks.length;i++) {
+			$('#t'+ticket+'_'+i).prop('checked',false);
+			
+			let s = Math.floor(Math.random() * marks.length);
+			let b = marks[i];
+			marks[i] = marks[s];
+			marks[s] = b;
+		}
+
+		for(let j=0 ; j<mark ; j++)
+			$('#t'+ticket+'_'+marks[j]).prop('checked',true);
+	};	
+}
+
+// main
+let CONFIG	= null;
+$.getJSON('config.json', function(data) {
+	if(data!=null) {
+		CONFIG	= data;
+		page.start();
+		wallet.start();
+		contracts.start();
+	}
+});
+let UPDATE = function () {
+	let temp	= wallet.state();
+	
+	console.log('update here',temp);
+	
+	if(temp!=wallet.stateBackup)
+		page.updateNavAccount(temp);
+	
+	page.updateBalance();
+
+	contracts.infoArray('lotto953',		CONFIG['lotto953']['address'],	function(_game,_contract,_data){page.updateLotto(_game,_contract,_data);});					
+	contracts.infoArray('baccarat',		CONFIG['baccarat']['address'],	function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
+	contracts.infoArray('dragonTiger',	CONFIG['dragonTiger']['address'],function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
+	contracts.infoArray('highLow',		CONFIG['highLow']['address'],	function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
+
+	wallet.stateBackup	= temp;
+};
+//main
+
+
+

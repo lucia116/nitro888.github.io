@@ -79,7 +79,7 @@ let wallet	= new function() {
 		if(temp==2) {
 			wallet.web3.eth.defaultAccount		= storage.address;
 			wallet.web3.settings.defaultAccount	= storage.address;				
-			wallet.updateBalance(function(balance){/*todo*/});
+			wallet.updateBalance(function(){/*todo*/});
 		} else
 			wallet.balance	= -1;
 
@@ -99,7 +99,7 @@ let wallet	= new function() {
 		storage.save();
 	};
 	this.updateBalance			= function(callback) {
-		wallet.web3.eth.getBalance(storage.address, function(e,r){if (!e) {wallet.balance=wallet.web3.fromWei(r.toNumber(),'ether');callback(wallet.balance);}});
+		wallet.web3.eth.getBalance(storage.address, function(e,r){if (!e) {wallet.balance=r.toNumber();callback();}});
 	};
 
 	// create
@@ -208,7 +208,7 @@ let wallet	= new function() {
 	this.logOut			= function() {
 		modal.update('Logout','Are you sure?','wallet.logOutOK()');
 	};
-	this.logOutOK			= function() {
+	this.logOutOK		= function() {
 		storage.reset();
 		storage.save();
 		UPDATE();
@@ -216,7 +216,7 @@ let wallet	= new function() {
 		modal.update('Logout','See you next time.');
 
 		if(page.parameter['game']!=-1||page.parameter['contract']!='')
-			setTimeout(function(){storage.reset();storage.save();location.href	= location.origin;},2000);
+			setTimeout(function(){storage.reset();storage.save();location.href=location.origin;},2000);
 	};
 	// login&out
 	
@@ -330,8 +330,8 @@ let wallet	= new function() {
 			else if(password=='')				modal.alert('<div class="alert alert-warning" role="alert">Passward is empty</div>');
 			else if(address==storage.address)	modal.alert('<div class="alert alert-warning" role="alert">This is your address</div>');
 		} else {
-			wallet.updateBalance(function(balance){
-				if(balance>parseInt(amount)) {
+			wallet.updateBalance(function(){
+				if(wallet.balance>wallet.web3.toWei(amount,'ether')) {
 					if(storage.tx != '') {
 						wallet.web3.eth.getTransaction(storage.tx,function(e,r){
 							if(!e)
@@ -351,12 +351,12 @@ let wallet	= new function() {
 							modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
 					}
 				} else {
-					modal.alert('<div class="alert alert-warning" role="alert">Amount is too big. Less then '+balance+' Eth</div>');
+					modal.alert('<div class="alert alert-warning" role="alert">Amount is too big. Less then '+wallet.web3.toWei(wallet.balance,'ether')+' Eth</div>');
 				}
 			});
 		}
 	};
-	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=21000) {
+	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=40000) {
 		let privateKey	= wallet.getPrivateKeyString(password);
 
 		if(privateKey!=null) {
@@ -378,7 +378,7 @@ let wallet	= new function() {
 								txParams['data']	= data;
 							let tx			= new ethereumjs.Tx(txParams);
 							tx.sign(new ethereumjs.Buffer.Buffer(privateKey, 'hex'));
-							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.update('Withrawal Fail',e); else {modal.update('Withrawal Success','<small><a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+r+'">'+r+'</a></small>');storage.tx=r;}});
+							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.alert('<div class="alert alert-warning" role="alert">Transaction Fail ('+e.message+')</div>'); else {modal.alert('<div class="alert alert-warning" role="alert">Success <small>(<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+r+'">'+r+'</a>)</small><div>');storage.tx=r;}});
 						}
 					});
 				}
@@ -449,6 +449,12 @@ let contracts	= new function() {
 		for(let i=0;i<address.length;i++)
 			contracts.info(game,address[i],callback);
 	};
+	this.buy			= function(game,address,tickets,password,callback) {
+		if(CONFIG[game]['contracts'][address]!=null) {
+			if(!wallet.sendTransaction(address,password,parseFloat(wallet.web3.fromWei(CONFIG[game]['informations'][address][3].toNumber()*tickets.length,'ether')),ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("buy(uint128[])", tickets))))
+				callback('<div class="alert alert-warning" role="alert">Password is wrong</div>');
+		}
+	};
 };
 
 let modal	= new function() {
@@ -465,8 +471,6 @@ let modal	= new function() {
 };
 
 let page		= new function() {
-	this.historyRow			= 6,
-	this.historyCol			= 140,
 	this.start				= function() {
 		page.startLotto('lotto953','#historyLotto935',6,3,3);
 		page.startCasino('baccarat','#historyBaccarat');
@@ -480,7 +484,7 @@ let page		= new function() {
 		body			+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
 		body			+="<div class='row'>";
 		for(let i=0 ; i < cnt ; i++) {
-			body		+='<div class="col-md-'+(12/cnt)+' panel"><div id="round_'+game+'_'+address+'_'+i+'">Round</div><div class="card-text">';
+			body		+='<div class="col-md-'+(12/cnt)+' panel"><div><small id="round_'+game+'_'+address+'_'+i+'">Round</small></div><div class="card-text">';
 			body		+='<table class="border border-secondary" style="width:100%;border-collapse: collapse;">';
 			for(let j=0 ; j < y ; j++) {
 				body+='<tr>';
@@ -501,14 +505,14 @@ let page		= new function() {
 	this.startCasino			= function(game,id) {
 		let body		= '';
 		
-		for(let i=0;i<CONFIG[game]['address'].length;i++) {
-			let address	= CONFIG[game]['address'][i];
+		for(let k=0;k<CONFIG[game]['address'].length;k++) {
+			let address	= CONFIG[game]['address'][k];
 
 			body		+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
 			body		+="<div style='overflow-x:auto;'><table class='border border-secondary'>";
-			for(let i = 0 ; i < page.historyRow ; i ++){
+			for(let i = 0 ; i < util.historyRow ; i ++){
 				body +="<tr>";
-				for(let j = 0 ; j < page.historyCol ; j++)
+				for(let j = 0 ; j < util.historyCol ; j++)
 					if((i*3+j)%2==0)
 						body	+="<td class='align-middle' bgcolor='#DEDEDE'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
 					else
@@ -523,13 +527,17 @@ let page		= new function() {
 	},
 	this.updateBtn			= function(game,address) {
 		let btn		= '<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">announcement</i></button>';
+		let max		= 0;
+		let mark		= 0;
 		
 		// todo : more lotto
 		switch(game) {
 		case 'lotto953':
-			btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showHistory(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">history</i></button>'+btn;
+			max	= 9;
+			mark	= 5;
+			btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showHistory(\''+game+'\',\''+address+'\','+max+')"><i class="material-icons" style="font-size:20px;">history</i></button>'+btn;
 			if(wallet.state()==2)
-				btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.ticket(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
+				btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.ticket(\''+game+'\',\''+address+'\','+max+','+mark+')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
 		break;
 		default:
 			if(wallet.state()==2)
@@ -571,9 +579,9 @@ let page		= new function() {
 				modal.update(CONFIG[game]['name'],table);
 			});
 	},
-	this.showHistory= function (game,address) {
+	this.showHistory= function (game,address,max) {
 		let marker	= [];
-		for(let i = 0 ; i < 9 ; i++)
+		for(let i = 0 ; i < max ; i++)
 			marker.push(1<<i);
 		
 		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
@@ -594,11 +602,12 @@ let page		= new function() {
 
 		table		+= "</tbody></table></div>";
 		modal.update('History',table);
+		wallet.updateTimer(true);
 	},
 	this.updateLotto		= function(game,address,data) {
 		$('#rnd_'+game+'_'+address).html("Round "+data[0].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
 		$('#btn_'+game+'_'+address).html(page.updateBtn(game,address));
-		$('#price_'+game+'_'+address).html("Price : "+wallet.web3.fromWei(data[3].toNumber(),'ether')+" E");
+		$('#price_'+game+'_'+address).html("Ticket : "+wallet.web3.fromWei(data[3].toNumber(),'ether')+" E");
 		$('#pot_'+game+'_'+address).html("Pot : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
 		
 		let marker			= [];
@@ -610,7 +619,8 @@ let page		= new function() {
 			max = 9;
 		break;
 		}
-		// todo : more lotto		
+		// todo : more lotto
+
 		for(let i = 0 ; i < max ; i++)
 			marker.push(1<<i);
 
@@ -635,56 +645,9 @@ let page		= new function() {
 		}		
 	},
 	this.updateCasino	= function(game,address,data) {
-		let history = new Array();
-
-		for(let i = 0 ; i < data[2].length ; i++)
-			history.push(util.openCards(data[2][i].toNumber()));
-
-		for(let i = 0 ; i < page.historyRow ; i ++)
-			for(let j = 0 ; j < page.historyCol ; j++)
-				$('#history_'+game+'_'+address+'_'+j+'_'+i).html('&nbsp');
-
-		let red		= "<i class='material-icons' style='font-size:16px;color:red'>brightness_1</i>";
-		let blue		= "<i class='material-icons' style='font-size:16px;color:blue'>brightness_1</i>";
-		let green	= "<i class='material-icons' style='font-size:16px;color:green'>brightness_1</i>";
-
-		let x1		= 0;
-		let x2		= 0;
-		let y		= 0;
-		let b		= -1;
-
-		$('#rnd_'+game+'_'+address).html("Round "+data[0][0].toNumber()+"-"+data[0][1].toNumber()+"-"+data[0][2].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
 		$('#btn_'+game+'_'+address).html(page.updateBtn(game,address));
-		$('#price_'+game+'_'+address).html("Price : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
-		
-		for(let i = 0 ; i < history.length ; i++){
-			let 	temp		= util.win(game,history[i]);
-			let win		= temp['win'];
-			let toolTip	= temp['toolTip'];
-
-			if(b==win) {
-				if(y == (page.historyRow-1) || $('#history_'+game+'_'+address+'_'+x1+'_'+(y+1)).html()!='&nbsp;' ) {
-					x2++;
-				} else {
-					y++;
-				}
-			} else if(b!=-1) {
-				x1++;
-				x2	= 0;
-				y	= 0;
-			}
-
-			let marker		= '!';
-
-			if(win==1)		marker = red;	// banker, dragon, high
-			else if(win==2)	marker = blue;	// player, tigher, low
-			else if(win==3)	marker = green;	// tie
-
-			$('#history_'+game+'_'+address+'_'+(x1+x2)+'_'+y).html('<a style="cursor:hand" data-toggle="tooltip" title="'+toolTip+'">'+marker+'</a>');
-			//$('[data-toggle="tooltip"]').tooltip();
-
-			b = win;
-		}
+		$('#price_'+game+'_'+address).html("Bet : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
+		util.updateCasino(game,address,data);
 	},
 	this.updateBalance		= function() {
 		// todo : show balance
@@ -716,19 +679,8 @@ let page		= new function() {
 				break;
 		}
 	},
-	this.ticket	= function (game,address) {
+	this.ticket	= function (game,address,max,mark) {
 		let cnt			= 4;
-		let max			= 0;
-		let mark			= 0;
-		
-		// todo : more lotto
-		switch(game) {
-		case 'lotto953':
-			max = 9;
-			mark= 5;
-		break;
-		}
-		// todo : more lotto		
 
 		let tickets		= '<table class="table">';
 		tickets			+='<thead><tr>';
@@ -752,9 +704,11 @@ let page		= new function() {
 		tickets			+='<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="buyTicketPass-'+game+'" type="password" class="form-control" placeholder="Password" aria-label="Buy Ticket Password"></div>';
 
 		modal.update('Ticket '+CONFIG[game]['name'],tickets,'page.ticketBuy(\''+game+'\','+cnt+','+max+','+mark+')');
+		wallet.updateTimer(true);
 	},
 	this.ticketBuy=function(game,cnt,max,mark) {
 		modal.alert('');
+		wallet.updateTimer(true);
 		
 		let buyTicket = [];
 
@@ -779,127 +733,33 @@ let page		= new function() {
 			if(privateKey==null)
 				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
 			{
-				wallet.updateBalance(function(balance){
-					contracts.info(game,CONFIG[game]['address'][0],function(_game,_address,_data){
-						if((parseInt(_data[1])!=1)) {
-							modal.alert('<div class="alert alert-warning" role="alert">Counter is not open!</div>');				
-						} else {
-							// todo : buy ticket
-							//abi.buy(3,abi.contents[game].contracts[contract],tickes,callback)
-							console.log("buy",game,cnt,max,mark,password,buyTicket,balance);
-						}
-					});
+				wallet.updateBalance(function(){
+					if(balance<=(buyTicket.length*CONFIG[game]['informations'][CONFIG[game]['address'][0]][3].toNumber()))
+						modal.alert('<div class="alert alert-warning" role="alert">Balance is too low</div>');
+					else
+						contracts.info(game,CONFIG[game]['address'][0],function(_game,_address,_data){
+							if((parseInt(_data[1])!=1)) {
+								modal.alert('<div class="alert alert-warning" role="alert">Counter is not open!</div>');				
+							} else {
+								let tickets	= [];
+								for(let i=0;i<buyTicket.length;i++) {
+									let t = 0;
+									for(let j=0;j<buyTicket[i].length;j++)
+										t	+= (1<<buyTicket[i][j]);
+									tickets.push(t);
+								}
+								contracts.buy(_game,_address,tickets,password,modal.alert);
+							}
+						});
 				});
 			}
 		}
 	};
-
 	this.play		= function(game,address) {
-		console.log('play',game,address);
-		
-		//$('#modlg').modal('show');
+		wallet.updateTimer(true);
+		location.href	= location.origin+'/game/?g='+game+'&a='+address;
 	}
 };
-
-let util	= new function() {
-	this.win				= function(game,openCards) {
-		let win		= 0;
-		let toolTip	= '';
-		
-		switch(game){
-			case 'baccarat':
-				let b	= (util.cut10(util.card(openCards['1st'][0]))+util.cut10(util.card(openCards['1st'][1])))%10;
-				b		= openCards['1st'][2]==0?b:(b+util.cut10(util.card(openCards['1st'][2])))%10;
-				let p	= (util.cut10(util.card(openCards['2nd'][0]))+util.cut10(util.card(openCards['2nd'][1])))%10;
-				p		= openCards['2nd'][2]==0?p:(p+util.cut10(util.card(openCards['2nd'][2])))%10;
-				toolTip = '('+b+','+p+')';
-				win 		= b>p?1:b<p?2:3;
-				break;
-			case 'dragonTiger':
-				let d	= util.card(openCards['1st'][0]);
-				let t	= util.card(openCards['2nd'][0]);
-				toolTip = '('+d+','+t+')';
-				win 		= d>t?1:d<t?2:3;
-				break;
-			case 'highLow':
-				let c1	= util.card(openCards['1st'][0]);
-				let c2	= util.card(openCards['2nd'][0]);
-				toolTip = '('+c1+','+c2+')';
-				win 		= c2>c1?1:c2<c1?2:3;
-				break;
-		}
-
-		return {'win':win,'toolTip':toolTip};
-	};
-	this.card			= function(index) {
-		return (index-1)%13+1;
-	};
-	this.cut10			= function(num) {
-		return num>9?0:num;
-	};
-	this.openCards		= function(raw) {
-		return {'1st':[util.bitwise(raw,0),util.bitwise(raw,8),util.bitwise(raw,16),util.bitwise(raw,24)],'2nd':[util.bitwise(raw,32),util.bitwise(raw,40),util.bitwise(raw,48),util.bitwise(raw,56)]};
-	};
-	this.bitwise			= function(num, from, size=8) {
-		let length	= 64;
-		let str		= num.toString(2);
-		if (str.length < length) str = Array(length - str.length + 1).join("0") + str;
-		return parseInt( str.slice(length-from-size,str.length-from), 2 );
-	};
-	this.binaryString	= function(num,length=64) {
-		let str		= num.toString(2);
-		if (str.length < length) str = Array(length - str.length + 1).join("0") + str;
-		return str;
-	};
-	this.getGameState	= function (state) {
-		let result	= '';
-		switch(state) {
-		case 0:
-			result = "Ready";
-			break;
-		case 1:
-			result = "Open";
-			break;
-		case 2:
-			result = "Close";
-			break;
-		case 3:
-			result = "Game";
-			break;
-		}
-		return result;
-	};
-	this.ticketLottoMark	= function (ticket,max,mark) {
-		if(util.ticketLottoMarkCount(ticket,max)>mark)
-			return false;
-		return true;
-	};
-	this.ticketLottoMarkCount = function (ticket,max) {
-		let count = 0;
-		for(let i=0;i<max;i++)
-			if($('#t'+ticket+'_'+i).prop('checked'))
-				count++;
-		return count;
-	};
-	this.ticketLottoRandom=function (ticket,max,mark) {
-		let marks	= [];
-		
-		for(let k=0;k<max;k++)
-			marks.push(k);
-
-		for(let i=0;i<marks.length;i++) {
-			$('#t'+ticket+'_'+i).prop('checked',false);
-			
-			let s = Math.floor(Math.random() * marks.length);
-			let b = marks[i];
-			marks[i] = marks[s];
-			marks[s] = b;
-		}
-
-		for(let j=0 ; j<mark ; j++)
-			$('#t'+ticket+'_'+marks[j]).prop('checked',true);
-	};	
-}
 
 // main
 let CONFIG	= null;
@@ -929,6 +789,3 @@ let UPDATE = function () {
 	wallet.stateBackup	= temp;
 };
 //main
-
-
-

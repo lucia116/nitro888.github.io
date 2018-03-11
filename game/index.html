@@ -1,0 +1,215 @@
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NITRO888 - Ethereum Casino</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <!-- Custom fonts for this template -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+
+    	<!-- nitro888.com -->
+    	<link rel="stylesheet" href="../nitro888.min.css">
+    
+  </head>
+
+  <body class="bg-secondary" id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <!-- <div class="container">  -->
+        <a class="navbar-brand js-scroll-trigger" href="../">Nitro888</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-secondary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1 dropdown">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded dropdown-toggle" style="cursor:hand" id="navbarDropdownMenuAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">account_box</i></a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAccount" id="navAccount"></div>
+            </li>
+          </ul>
+        </div>
+      <!-- </div> -->
+    </nav>
+    <!-- Navigation -->
+    
+	<!--navigation-->
+	<nav class="navbar sticky-top navbar-dark bg-dark">
+		<a class="navbar-brand text-white" onClick="script:page.enter()" style="cursor:hand">Nitro888</a>
+		<ul class="nav justify-content-end text-white">
+			<li class="nav-item">
+				<a class="nav-link disabled mr-md-2" id="walletBalance"></a>
+			</li>
+			<li class="nav-item dropdown" id="mainNavWallet">
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" style="cursor:hand" id="navbarDropdownMenuAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">account_box</i></a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAccount" id="mainNavAccount"></div>
+			</li>
+		</ul>
+	</nav>
+	<!--navigation-->    
+
+    	<!--Modal Dlg-->
+	<div class="modal fade" id="modlg" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-secondary">
+					<h4 class="modal-title text-uppercase text-white" id="modalTitle">Title...</h4>
+				</div>
+				<div id='modalAlert' class="bg-light">
+				</div>
+				<div class="modal-body bg-light" id="modalBody">body.... </div>
+				<div class="modal-footer bg-light" id="modalFooter">Foot...</div>
+			</div>
+		</div>
+	</div>
+	<!--Modal Dlg-->
+
+	<!--Contents-->
+	<div id="contentsBody">
+
+	    <!-- game -->
+	    <section class="bg-light text-dark mb-0" id="lotto953">
+	      <div class="container">
+			<h4 class="text-uppercase" id="gameTitle"></h4>
+	      	<div class="row" id="gameTop">
+				<div class="col-md-6 panel" id="gameFrame">
+					<canvas id="gameCanvas" width=720 height=720 style="background:linear-gradient(to bottom, #33cc33 0%, #006600 100%)"></canvas>
+				</div>
+				<div class="col-md-6 panel">
+					<div id="line"><h6>HISTORY</h6></div>
+					<div id="gameHistory"></div>
+					<div><h6>CHAT</h6></div>
+					<div class="list-unstyled" id="chatmessage" align="left" style="overflow-y:auto;background-color:#DEDEDE;"></div>
+					<div><input id="chatInput" type="text" class="form-control" placeholder="message"></div>
+				</div>
+	      	</div>
+	      </div>
+	    </section>
+	    <!-- game -->
+
+	</div>
+	<!--Contents-->
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-5 mb-lg-0">
+            <h4 class="text-uppercase mb-4">Nitro888.Com</h4>
+          </div>
+          <div class="col-md-4 mb-5 mb-lg-0">
+            <h4 class="text-uppercase mb-4">Help and Support</h4>
+          </div>
+          <div class="col-md-4">
+            <h4 class="text-uppercase mb-4">Latest News</h4>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div class="copyright py-4 text-center text-white">
+      <div class="container">
+        <small>Copyright &copy; Nitro888.Com</small>
+      </div>
+    </div>
+    <!-- Footer -->
+
+    <!-- Bootstrap core JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    	<!-- nitro888.com -->
+	<script src="../nitro888.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+	<script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+	<script src="https://cdn.rawgit.com/MetaMask/provider-engine/master/dist/ZeroClientProvider.js"></script>
+	<script src="https://cdn.rawgit.com/ethereumjs/keythereum/master/dist/keythereum.min.js"></script>
+	<script src="https://cdn.rawgit.com/ethereumjs/browser-builds/master/dist/ethereumjs-vm/ethereumjs-vm-2.3.1.min.js"></script>
+
+	<script src="cocos2d-js-v3.13-lite.js"></script>
+	<script src="../util.js"></script>
+	<script src="game.js"></script>
+
+    <script>
+		function resize() {
+	        $("#gameCanvas").width($("#gameFrame").innerWidth()-30);
+	        $("#gameCanvas").height($("#gameCanvas").width());
+	        if(($("#gameCanvas").width()+30)==$("#gameTop").width()) {
+	            $("#chatmessage").height($("#chatmessage").width());
+	            $('#line').html('<br/><h6>HISTORY</h6>');
+	        } else {
+	        		$("#chatmessage").height($("#gameCanvas").height()-$("#gameHistory").height()-$("#chatInput").height()-65);
+	        		$('#line').html('<h6>HISTORY</h6>');
+	        }
+		}
+		function history(game,address) {
+			let body		= '';
+			body		+="<div style='overflow-x:auto;'><table class='border border-secondary'>";
+			for(let i = 0 ; i < util.historyRow ; i ++){
+				body +="<tr>";
+				for(let j = 0 ; j < util.historyCol ; j++)
+					if((i*3+j)%2==0)
+						body	+="<td class='align-middle' bgcolor='#DEDEDE'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
+					else
+						body	+="<td class='align-middle bg-light'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
+				body	+="</tr>";
+			}
+			body		+="</table></div>";
+			body		+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
+			
+			$("#gameHistory").html(body);
+		}
+		$(document).ready(function() {
+			let url = new URL(location.href);
+			let game = url.searchParams.get("g");
+			let addr = url.searchParams.get("a");
+			history(game,addr);
+			resize();
+
+			$.getJSON('../config.json', function(data) {
+				if(data!=null) {
+					let CONFIG	= data;
+					$('#gameTitle').html(CONFIG[game]['name']);
+					cc.game.onStart = function() {
+						cc.director.setDisplayStats(false);
+					    cc.view.enableRetina(true);
+					    cc.view.adjustViewPort(true);
+					    cc.view.resizeWithBrowserSize(true);
+					    cc.LoaderScene.preload(g_resources, function () {
+					    		cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);
+					    		const scene = new gameScene(game,addr); 
+					    		cc.director.runScene(scene);
+					    		
+					    		const ENGINE		= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
+					    		const WEB3		= new Web3(ENGINE);
+					    		
+					    		ENGINE.on('block', function(block){
+					    			WEB3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
+					    		});
+					    }, cc.game);
+					};
+					cc.game.run();
+				}
+			});
+		});
+		window.addEventListener("resize",resize,true);
+    	</script>
+
+  </body>
+
+</html>

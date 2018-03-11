@@ -187,7 +187,7 @@ let gameScene = cc.Scene.extend({
 				this.initBaccarat();
 				this.initGeneral();
 				break;
-			case 'daragonTiger':
+			case 'dragonTiger':
 				this.initDragonTiger();
 				this.initGeneral();
 				break;

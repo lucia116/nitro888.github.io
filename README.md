@@ -3,6 +3,8 @@
 Nitro888 ethereum casino project is written in javascript and solidity.
 
 ## Features
+### Wallet
+Wallet is a client side wallet.
 ### Lotto
 Lotto953 is a form of lottery in which five numbers are drawn from a larger pool (for example, 5 out of 9).
 ### Baccarat

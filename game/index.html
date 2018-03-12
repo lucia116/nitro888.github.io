@@ -175,6 +175,12 @@
 			
 			$("#gameHistory").html(body);
 		}
+		function hasAddr(addr,addrArray){
+			for(let i=0;i<addrArray.length;i++)
+				if(addrArray[i]==addr)
+					return true;
+			return false;
+		}
 		function UPDATE() {}
 
 		$(document).ready(function() {
@@ -183,30 +189,39 @@
 			let addr = url.searchParams.get("a");
 			history(game,addr);
 			resize();
-
-			$.getJSON('../config.json', function(data) {
-				if(data!=null) {
-					CONFIG	= data;
-					storage.provider	= CONFIG['network']['provider'];
-					$('#gameTitle').html(CONFIG[game]['name']);
-					cc.game.onStart = function() {
-						cc.director.setDisplayStats(false);
-					    cc.view.enableRetina(true);
-					    cc.view.adjustViewPort(true);
-					    cc.view.resizeWithBrowserSize(true);
-					    cc.LoaderScene.preload(g_resources, function () {
-					    		cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);
-					    		const scene = new gameScene(game,addr); 
-					    		cc.director.runScene(scene);
-							wallet.start(function(){
-									wallet.web3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
-								});
-							chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
-					    }, cc.game);
-					};
-					cc.game.run();
-				}				
-			});
+			
+			if(!game || !addr) {
+				location.href=location.origin;
+			} else
+				$.getJSON('../config.json', function(data) {
+					if(data!=null) {
+						CONFIG	= data;
+						if(!CONFIG[game])
+							location.href=location.origin;
+						else {
+							$('#gameTitle').html(CONFIG[game]['name']);
+							cc.game.onStart = function() {
+								cc.director.setDisplayStats(false);
+							    cc.view.enableRetina(true);
+							    cc.view.adjustViewPort(true);
+							    cc.view.resizeWithBrowserSize(true);
+							    cc.LoaderScene.preload(g_resources, function () {
+							    		cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);
+							    		const scene = new gameScene(game,addr); 
+							    		cc.director.runScene(scene);
+									wallet.start(function(){
+											if(wallet.state()!=2||!hasAddr(addr,CONFIG[game]['address']))
+												location.href=location.origin;
+											else
+												wallet.web3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
+										});
+									chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
+							    }, cc.game);
+							};
+							cc.game.run();
+						}
+					}				
+				});
 		});
 		window.addEventListener("resize",resize,true);
     	</script>

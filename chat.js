@@ -1,13 +1,14 @@
 let chat	= new function() {
 	socket:null,
-	this.start	= function(output,input,url,game='',ch=0) {
+	this.start	= function(output,input,url,nick='',game='',ch=0) {
 		$(input).on('keyup', function (e) {
 		    if (e.keyCode == 13 && chat.socket!=null) {
 		    		if($(input).val()=="")
 		    			return;    		    		
-		    		let message = $(input).val();
+		    		let msg = $(input).val();
+		    		nick		= nick.length>5?nick.substring(0,5):nick;
 		    		$(input).val('');
-		    		chat.socket.emit('chat',{game:game,ch:ch,msg:message});
+		    		chat.socket.emit('chat',{'game':game,'ch':ch,'nick':nick,'msg':msg});
 		    }
 		});
 		chat.socket	= io(url);

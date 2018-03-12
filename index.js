@@ -1,474 +1,29 @@
-let storage	= new function() {
-	this.wallet		= '';
-	this.address		= '';
-	this.tx			= '';
-	this.time		= 0;
-	this.load		= function() {
-		if(!storage.hasData())
-			return;
-		let data	= JSON.parse(localStorage[CONFIG['network']['provider']]);
-		storage.wallet	= data.wallet;
-		storage.address	= data.address;
-		storage.time		= data.time;
-	};
-	this.save		= function() {
-		localStorage[CONFIG['network']['provider']] = storage.wallet!=''?JSON.stringify({'wallet':storage.wallet,'address':storage.address,'tx':storage.tx,'time':storage.time}):'';
-	};
-	this.hasData		= function() {
-		return (typeof localStorage[CONFIG['network']['provider']] !== 'undefined' && localStorage[CONFIG['network']['provider']] != '');
-	};
-	this.hasStorage	= function() {
-		return (typeof(Storage) !== "undefined");
-	};
-	this.remove		= function() {
-		storage.wallet	= '';
-		storage.address	= '';
-		storage.tx		= '';
-		localStorage.removeItem(CONFIG['network']['provider']);
-	};
-	this.reset		= function() {
-		storage.address	= '';
-		storage.time		= 0;
-	};
-};
-
-let wallet	= new function() {
-	this.web3			= null;
-	this.balance			= -2;
-	this.stateBackup		= -1;
-	this.timer			= 1800000;
-	this.showEthNetwork	= function() {
-		wallet.web3.version.getNetwork((e, r) => {
-			  switch (r) {
-			    case "1":	console.log('This is mainnet');								break;
-			    case "2":	console.log('This is the deprecated Morden test network.');	break;
-			    case "3":	console.log('This is the ropsten test network.');				break;
-			    default:		console.log('This is an unknown network.('+r+')');
-			  }
-			});
-	};
-	this.state			= function() {
-		if (storage.hasStorage() && storage.hasData() && storage.wallet != '') {
-			if(storage.address!=='')
-				return 2;
-			else
-				return 1;	
-		}
-		return 0;
-	};
-	this.start			= function() {
-		if(!storage.hasStorage())
-			$('#top-alert').html('<div class="alert alert-warning" role="alert">This browser is not support storage!</div>');
-		else if(!storage.hasData()) {
-			storage.remove();
-		} else {
-			storage.load();
-			wallet.updateTimer(true);
-		}
-
-		const engine		= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
-		wallet.web3		= new Web3(engine);
-		wallet.showEthNetwork();
-		engine.on('block', wallet.updateBlock);
-	};
-	this.updateBlock		= function(block) {
-		wallet.updateTimer(false);
-		
-		let temp		= wallet.state();
-		
-		if(temp==2) {
-			wallet.web3.eth.defaultAccount		= storage.address;
-			wallet.web3.settings.defaultAccount	= storage.address;				
-			wallet.updateBalance(function(){/*todo*/});
-		} else
-			wallet.balance	= -1;
-
-		UPDATE();		
-		wallet.stateBackup	= temp;
-	};
-	this.updateTimer		= function(update) {
-		let time = new Date().getTime();
-		if(wallet.state()!=2)
-			return;
-		if(time > parseInt(storage.time) + wallet.timer) {
-			storage.reset();
-			storage.save();
-			location.href	= location.origin;
-		} else if(update)
-			storage.time	= time;
-		storage.save();
-	};
-	this.updateBalance			= function(callback) {
-		wallet.web3.eth.getBalance(storage.address, function(e,r){if (!e) {wallet.balance=r.toNumber();callback();}});
-	};
-
-	// create
-	this.create		= function() {
-		if(!storage.hasStorage()) {
-			modal.update('Create Fail','This browser is not support storage!');
-			return;
-		}
-
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<center>Create wallet from <b>' + CONFIG['network']['name'] + '</b></center>' +
-							'<center>Wallet data in your computer only.</center>' +
-							'<center>If you clean up your browser. Be removed wallet data permanently too.</center><br/>' +
-							'<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="pass1" type="password" class="form-control" placeholder="Password (Over 8 letters)" aria-label="Password (Over 8 letters)"></div>' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="pass2" type="password" class="form-control" placeholder="Password retype" aria-label="Password retype">' +
-							'</div></div>';
-		modal.update('Create wallet',body,'wallet.createOK()');
-		modal.alert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And MUST backup your wallet.</center></div>');
-	};
-	this.getPrivateKeyString	= function(password) {
-		let privateKey	= null;
-		try {
-			let temp		= keythereum.recover(password, JSON.parse(storage.wallet));
-			privateKey	= Array.prototype.map.call(temp, x => ('00' + x.toString(16)).slice(-2)).join('');
-		} catch (e) {
-			privateKey	= null;
-		}
-		return privateKey;
-	};
-	this.getPrivateKeyBuffer	= function(password) {
-		let privateKey	= null;
-		try {
-			privateKey	= keythereum.recover(password, JSON.parse(storage.wallet));
-		} catch (e) {
-			privateKey	= null;
-		}
-		return privateKey;
-	};
-	this.createOK	= function() {
-		let p1	= $('#pass1').val();
-		let p2	= $('#pass2').val();
-
-		if(p1===p2 && p1.length > 7) {
-			let dk				= keythereum.create();
-			let keyObject		= keythereum.dump(p1, dk.privateKey, dk.salt, dk.iv);
-			
-			keyObject.isMainNet	= CONFIG['network']['isMainNet'];
-			storage.wallet		= JSON.stringify(keyObject);
-			storage.reset();
-			storage.save();
-			
-			UPDATE();
-
-			modal.update('Create','Success create your new account.');
-			modal.alert('<div class="alert alert-danger font-weight-bold" role="alert"><center>Don\'t forget your password. And must backup your wallet.</center></div>');
-		} else {
-			if(p1!=p2) {
-				modal.alert('<div class="alert alert-warning" role="alert">Passwords are not same</div>');
-			} else {
-				modal.alert('<div class="alert alert-warning" role="alert">password is TOO short</div>');
-			}
-		}
-	}
-	// create
-	
-	// login&out
-	this.logIn			= function() {
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="loginPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
-							'</div>';		
-		modal.update('Login',body,'wallet.logInOK()');
-	};
-	this.logInOK			= function() {
-		let password		= $('#loginPass').val();
-		
-		try {
-			keythereum.recover(password, JSON.parse(storage.wallet));
-			wallet.loginWithPK();
-		} catch (e) {
-			if(password!='')
-				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
-			else
-				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');			
-		}
-	}
-	this.loginWithPK		= function() {
-		wallet.web3.version.getNetwork((e, r) => {
-				let data	= JSON.parse(storage.wallet);
-				if((r==1&&data.isMainNet)||(r==3&&!data.isMainNet)) {
-					wallet.web3.eth.defaultAccount			= '0x'+data.address;
-					wallet.web3.settings.defaultAccount		= '0x'+data.address;
-					
-					storage.address	= '0x'+data.address;
-					storage.time		= new Date().getTime();
-					storage.save();
-
-					UPDATE();
-					
-					modal.update('Login','Login Success');
-				} else  {
-					modal.update('Login','Login Fail');
-					return;					
-				}
-			});
-	};
-	this.logOut			= function() {
-		modal.update('Logout','Are you sure?','wallet.logOutOK()');
-	};
-	this.logOutOK		= function() {
-		storage.reset();
-		storage.save();
-		UPDATE();
-
-		modal.update('Logout','See you next time.');
-
-		if(page.parameter['game']!=-1||page.parameter['contract']!='')
-			setTimeout(function(){storage.reset();storage.save();location.href=location.origin;},2000);
-	};
-	// login&out
-	
-	// destory
-	this.destory			= function() {
-		let body			=	'<p class="text-danger">Destroy Wallet.</p>' +
-							'<div style="overflow-x:auto;">' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="destoryPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
-							'</div>';		
-		modal.update('Destory',body,'wallet.destroyOK()');
-	};
-	this.destroyOK		= function() {
-		let password		= $('#destoryPass').val();
-
-		try {
-			keythereum.recover(password, JSON.parse(storage.wallet));
-			storage.remove();
-			wallet.logOutOK();
-			modal.update('Destory','Destory wallet complete');
-		} catch (e) {
-			if(password!='')
-				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
-			else
-				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');			
-		}
-	};
-	// destory
-	
-	// export & import
-	this.export	= function() {
-		wallet.updateTimer(true);
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="exportPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
-							'</div>';		
-		modal.update('Export Wallet',body,'wallet.exportOK()');
-	};
-	this.exportOK	= function() {
-		let password		= $('#exportPass').val();
-		
-		try {
-			let privateKey		= keythereum.recover(password, JSON.parse(storage.wallet));
-			modal.update('Export Wallet','<div style="overflow-x:auto;"><small>'+storage.wallet+'</small></div>');
-		} catch (e) {
-			if(re=='')
-				modal.alert('<div class="alert alert-warning" role="alert">Password is empty</div>');
-			else
-				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');			
-		}
-	};
-	this.restore	= function() {
-		if(!storage.hasStorage()) {
-			page.modalUpdate('Restore Fail','This browser is not support storage!');
-			return;
-		}
-
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<div class="input-group mb-3"><input id="restoreStr" type="text" class="form-control" placeholder="Restore string" aria-label="Restore string"></div>' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="restorePass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
-							'</div>';		
-		modal.update('Restore',body,'wallet.restoreOK()');
-	};
-	this.restoreOK	= function() {
-		let password		= $('#restorePass').val();
-		let restore		= $('#restoreStr').val();
-		let keyObject	= JSON.parse(restore);
-		
-		try {
-			let privateKey		= keythereum.recover(password, keyObject);
-			storage.wallet		= JSON.stringify(keyObject);
-			storage.reset();
-			storage.save();
-			page.modalUpdate('Restore','Restore wallet complete');
-		} catch (e) {
-			if(password!=''&&restore!='')
-				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong.</div>');
-			else if(restore=='')
-				modal.alert('<div class="alert alert-warning" role="alert">Restore string is empty</div>');
-			else if(password=='')
-				modal.alert('<div class="alert alert-warning" role="alert">Restore password is empty</div>');			
-		}
-	};
-	// export & import
-	
-	// deposit & withdrawal
-	this.deposit			= function() {
-		wallet.updateTimer(true);
-		let body	= '<div align="center"><p class="text-warning">!! WARNING! THIS NETWORK IS '+CONFIG['network']['name']+' !!</p></div>';
-		body		+="<div align='center'><img src='https://api.qrserver.com/v1/create-qr-code/?data="+storage.address+"&size=256x256 alt='' width='256' height='256'/></div><br/>";
-		body		+="<div align='center'><a class='text-primary' target='_blank' href='"+CONFIG['network']['ethscan']+"/address/"+storage.address+"'>"+storage.address+"</a></div>";
-		modal.update('Deposit',body);
-	};
-	this.withrawal		= function() {
-		wallet.updateTimer(true);
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">account_balance_wallet</i></span></div><input id="withrawalAdr" type="text" class="form-control" placeholder="Withrawal Address" aria-label="Withrawal Address"></div>' +
-							'<div class="input-group mb-3"><input id="withrawalVal" type="number" step="any" class="form-control" placeholder="Withrawal Amount" aria-label="Withrawal Amount"></div>' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="withrawalPass" type="password" class="form-control" placeholder="Password" aria-label="Withrawal Password"></div>' +
-							'</div>';
-		modal.update('Withrawal',body,'wallet.withrawalOK()');
-	};
-	this.withrawalOK		= function() {
-		let address		= $('#withrawalAdr').val();
-		let amount		= $('#withrawalVal').val();
-		let password		= $('#withrawalPass').val();
-		modal.alert('');
-		
-		if(address==''||amount==0||amount==''||password==''||!wallet.web3.isAddress(address)||address==storage.address) {
-			if(!wallet.web3.isAddress(address))	modal.alert('<div class="alert alert-warning" role="alert">Address is wrong</div>');
-			else if(address=='')					modal.alert('<div class="alert alert-warning" role="alert">Address is empty</div>');
-			else if(amount==0||amount=='')		modal.alert('<div class="alert alert-warning" role="alert">Withrawal is zero</div>');
-			else if(password=='')				modal.alert('<div class="alert alert-warning" role="alert">Passward is empty</div>');
-			else if(address==storage.address)	modal.alert('<div class="alert alert-warning" role="alert">This is your address</div>');
-		} else {
-			wallet.updateBalance(function(){
-				if(wallet.balance>wallet.web3.toWei(amount,'ether')) {
-					if(storage.tx != '') {
-						wallet.web3.eth.getTransaction(storage.tx,function(e,r){
-							if(!e)
-								if(r.blockNumber==null || parseInt(r.blockHash) == 0) 
-									modal.alert('<div class="alert alert-warning" role="alert">Transaction is pending : <br/><small><a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+storage.tx+'">'+storage.tx+'</a></small></div>');
-								else {
-									storage.tx	= '';
-									storage.save();
-									if(!wallet.sendTransaction(address,password,amount))
-										modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');									
-								}
-							else
-								modal.alert('<div class="alert alert-warning" role="alert">Transaction fail</div>');
-						});
-					} else {
-						if(!wallet.sendTransaction(address,password,amount))
-							modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
-					}
-				} else {
-					modal.alert('<div class="alert alert-warning" role="alert">Amount is too big. Less then '+wallet.web3.toWei(wallet.balance,'ether')+' Eth</div>');
-				}
-			});
-		}
-	};
-	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=40000) {
-		let privateKey	= wallet.getPrivateKeyString(password);
-
-		if(privateKey!=null) {
-			wallet.web3.eth.getGasPrice(function(e,r){
-				if(e!=null) {
-					modal.alert('<div class="alert alert-warning" role="alert">Network error - getGasPrice</div>');
-				} else {
-					let gasPrice = wallet.web3.toHex(r.toNumber());
-					wallet.web3.eth.getTransactionCount(storage.address,function(e,t){
-						if(e!=null) {
-							modal.alert('<div class="alert alert-warning" role="alert">Network error - getTransactionCount</div>');
-						} else {
-							let txParams		= {	'nonce'		:	wallet.web3.toHex(parseInt(t)),
-												'gasPrice'	:	gasPrice, 
-												'gasLimit'	:	wallet.web3.toHex(gasLimit),
-												'to'			:	address, 
-												'value'		:	wallet.web3.toHex(wallet.web3.toWei(amount, 'ether'))};
-							if(data!=null)
-								txParams['data']	= data;
-							let tx			= new ethereumjs.Tx(txParams);
-							tx.sign(new ethereumjs.Buffer.Buffer(privateKey, 'hex'));
-							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.alert('<div class="alert alert-warning" role="alert">Transaction Fail ('+e.message+')</div>'); else {modal.alert('<div class="alert alert-warning" role="alert">Success <small>(<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+r+'">'+r+'</a>)</small><div>');storage.tx=r;}});
-						}
-					});
-				}
-			});
-			return true;
-		}
-		return false;
-	};
-	// deposit & withdrawal
-	
-	// history
-	this.history			= function() {
-		wallet.updateTimer(true);
-		modal.update('Transaction History',"Now Loading");
-
-		let jsonUrl	= CONFIG['network']['ethscan']+"/api?module=account&action=txlist&address="+storage.address+"&startblock=0&endblock=latest";
-		$.getJSON(jsonUrl,function(data) {
-			if(data["result"].length==0)
-				modal.update('Transaction History',data["message"]);
-			else {
-					let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
-					
-					for(i=data["result"].length-1;i>=0;i--){
-						let date		= new Date(data["result"][i]["timeStamp"]*1000);
-						let tx		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/' + data["result"][i]["hash"] + '">'+data["result"][i]["hash"]+'</a>';
-						let from		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
-						let to		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
-						let value	= wallet.web3.fromWei(data["result"][i]["value"],'ether');
-
-						//let gas		= data["result"][i]["gas"];
-						//let gasPrice	= data["result"][i]["gasPrice"];
-						//let gasUsed	= data["result"][i]["gasUsed"];
-						//let input	= data["result"][i]["input"];						
-						//value *= (data["result"][i]["from"]==storage.address)?-1:1;
-						//table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
-						
-						if(data["result"][i]["from"]==storage.address) {
-							value *= -1;
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
-						} else {
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
-						}
-					}
-					table		+= "</tbody></table></div>";
-					modal.update('Transaction History',table);
-				}			
-			});
-	};
-	// history
-};
-
 let contracts	= new function() {
 	this.start		= function() {
 		contracts.create('lotto953');
 		contracts.create('baccarat');
 		contracts.create('dragonTiger');
 		contracts.create('highLow');
-	};
+	},
 	this.create		= function(game) {
 		for(let i=0;i<CONFIG[game]['address'].length;i++)
 			CONFIG[game]['contracts'][CONFIG[game]['address'][i]]	= wallet.web3.eth.contract(CONFIG[game]['abi']).at(CONFIG[game]['address'][i]);
-	};
+	},
 	this.info		= function(game,address,callback) {
 		if(CONFIG[game]['contracts'][address]!=null)
 			CONFIG[game]['contracts'][address].information(function(e,r){if (!e){CONFIG[game]['informations'][address]=r;callback(game,address,r);}});
-	};
+	},
 	this.infoArray	= function(game,address,callback) {
 		for(let i=0;i<address.length;i++)
 			contracts.info(game,address[i],callback);
-	};
+	},
 	this.buy			= function(game,address,tickets,password,callback) {
 		if(CONFIG[game]['contracts'][address]!=null) {
 			if(!wallet.sendTransaction(address,password,parseFloat(wallet.web3.fromWei(CONFIG[game]['informations'][address][3].toNumber()*tickets.length,'ether')),ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("buy(uint128[])", tickets))))
 				callback('<div class="alert alert-warning" role="alert">Password is wrong</div>');
 		}
-	};
-};
-
-let modal	= new function() {
-	this.update	= function(title, body, foot='', alert=''){
-		let dismiss	= '<button type="button" class="btn btn-primary" data-dismiss="modal">Dismiss</button>';
-		$('#modalTitle').html(title);
-		$('#modalAlert').html(alert);
-		$('#modalBody').html(body);
-		$('#modalFooter').html(foot===''?dismiss:'<button type="button" class="btn btn-primary" onClick="script:'+foot+'">Confirm</button>'+dismiss);
-	};
-	this.alert	= function(alert=''){
-		$('#modalAlert').html(alert);
-	};		
-};
+	}
+}
 
 let page		= new function() {
 	this.start				= function() {
@@ -649,36 +204,6 @@ let page		= new function() {
 		$('#price_'+game+'_'+address).html("Bet : "+wallet.web3.fromWei(data[4].toNumber(),'ether')+" E");
 		util.updateCasino(game,address,data);
 	},
-	this.updateBalance		= function() {
-		// todo : show balance
-		if(wallet.state()==2&&wallet.balance>=0)
-			console.log("page.updateBalance : " + wallet.balance);
-		else
-			console.log("page.updateBalance : " + "");
-	},
-	this.updateNavAccount	= function(state) {
-		switch(wallet.state())
-		{
-			case 0:
-				$('#navAccount').html(	'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.create()">Create</a>'+
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.restore()">Restore</a>' );					
-				break;
-			case 1:
-				$('#navAccount').html(	'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.logIn()">Login</a>' );					
-				break;
-			case 2:
-				$('#navAccount').html(	
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.deposit()">Deposit</a>' +
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.withrawal()">Withrawal</a>' +
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.history()">History</a>' +
-										'<div class="dropdown-divider"></div>' +
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.export()">Export</a>' +
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.destory()">Destroy</a>' +
-										'<div class="dropdown-divider"></div>' +
-										'<a class="dropdown-item" style="cursor:hand" data-toggle="modal" data-target="#modlg" onClick="script:wallet.logOut()">Logout</a>' );
-				break;
-		}
-	},
 	this.ticket	= function (game,address,max,mark) {
 		let cnt			= 4;
 
@@ -754,38 +279,26 @@ let page		= new function() {
 				});
 			}
 		}
-	};
+	},
 	this.play		= function(game,address) {
 		wallet.updateTimer(true);
 		location.href	= location.origin+'/game/?g='+game+'&a='+address;
 	}
-};
+}
 
 // main
-let CONFIG	= null;
-$.getJSON('config.json', function(data) {
-	if(data!=null) {
-		CONFIG	= data;
-		page.start();
-		wallet.start();
-		contracts.start();
-	}
-});
 let UPDATE = function () {
-	let temp	= wallet.state();
-	
-	console.log('update here',temp);
-	
-	if(temp!=wallet.stateBackup)
-		page.updateNavAccount(temp);
-	
-	page.updateBalance();
-
 	contracts.infoArray('lotto953',		CONFIG['lotto953']['address'],	function(_game,_contract,_data){page.updateLotto(_game,_contract,_data);});					
 	contracts.infoArray('baccarat',		CONFIG['baccarat']['address'],	function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
 	contracts.infoArray('dragonTiger',	CONFIG['dragonTiger']['address'],function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
 	contracts.infoArray('highLow',		CONFIG['highLow']['address'],	function(_game,_contract,_data){page.updateCasino(_game,_contract,_data);});
-
-	wallet.stateBackup	= temp;
-};
+}
+$.getJSON('config.json', function(data) {
+	if(data!=null) {
+		CONFIG	= data;
+		page.start();
+		wallet.start(UPDATE);
+		contracts.start();
+	}
+});
 //main

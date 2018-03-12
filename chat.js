@@ -6,7 +6,7 @@ let chat	= new function() {
 		    		if($(input).val()=="")
 		    			return;    		    		
 		    		let msg = $(input).val();
-		    		nick		= nick.length>5?nick.substring(0,5):nick;
+		    		nick		= nick.length>5?nick.substring(2,10):nick;
 		    		$(input).val('');
 		    		chat.socket.emit('chat',{'game':game,'ch':ch,'nick':nick,'msg':msg});
 		    }

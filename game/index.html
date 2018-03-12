@@ -175,18 +175,19 @@
 			
 			$("#gameHistory").html(body);
 		}
+		function UPDATE() {}
+
 		$(document).ready(function() {
-			let url = new URL(location.href);
+			let url	= new URL(location.href);
 			let game = url.searchParams.get("g");
 			let addr = url.searchParams.get("a");
 			history(game,addr);
 			resize();
 
-			chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com');
-
 			$.getJSON('../config.json', function(data) {
 				if(data!=null) {
-					let CONFIG	= data;
+					CONFIG	= data;
+					storage.provider	= CONFIG['network']['provider'];
 					$('#gameTitle').html(CONFIG[game]['name']);
 					cc.game.onStart = function() {
 						cc.director.setDisplayStats(false);
@@ -197,17 +198,14 @@
 					    		cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);
 					    		const scene = new gameScene(game,addr); 
 					    		cc.director.runScene(scene);
-					    		
-					    		const ENGINE		= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
-					    		const WEB3		= new Web3(ENGINE);
-					    		
-					    		ENGINE.on('block', function(block){
-					    			WEB3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
-					    		});
+							wallet.start(function(){
+									wallet.web3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
+								});
+							chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
 					    }, cc.game);
 					};
 					cc.game.run();
-				}
+				}				
 			});
 		});
 		window.addEventListener("resize",resize,true);

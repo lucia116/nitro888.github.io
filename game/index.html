@@ -135,7 +135,10 @@
 
     	<!-- nitro888.com -->
 	<script src="../nitro888.min.js"></script>
+	<!--
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+	-->
+	<script src="https://nitro888chat.herokuapp.com/socket.io/socket.io.js"></script>
 	<script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
 	<script src="https://cdn.rawgit.com/MetaMask/provider-engine/master/dist/ZeroClientProvider.js"></script>
 	<script src="https://cdn.rawgit.com/ethereumjs/keythereum/master/dist/keythereum.min.js"></script>
@@ -143,6 +146,7 @@
 
 	<script src="cocos2d-js-v3.13-lite.js"></script>
 	<script src="../util.js"></script>
+	<script src="../chat.js"></script>
 	<script src="game.js"></script>
 
     <script>
@@ -180,6 +184,8 @@
 			let addr = url.searchParams.get("a");
 			history(game,addr);
 			resize();
+
+			chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com');
 
 			$.getJSON('../config.json', function(data) {
 				if(data!=null) {

@@ -153,7 +153,7 @@ let messageBox = cc.Layer.extend({
 		this.boxBG.setOpacity(189);
 		this.addChild(this.boxBG);
 
-        	this.message	= cc.LabelTTF.create("BANKER", "Roboto", 100);
+        	this.message	= cc.LabelTTF.create("BANKER", "Montserrat", 100);
         	this.message.setPosition(cc.winSize.width/2,cc.winSize.height/2+210);
 	    this.addChild(this.message);
 
@@ -171,6 +171,9 @@ let gameScene = cc.Scene.extend({
 	round:null,
 	betEnable:false,
 	state:-1,
+	time:-1,
+	last:-1,
+	next:-1,
 	oddUI:{'bet0':{'point':0,'odd':0},'bet1':{'point':0,'odd':0},'bet2':{'point':0,'odd':0}},
 	fxUI:new Array(),
 	messageBox:null,
@@ -212,7 +215,8 @@ let gameScene = cc.Scene.extend({
 
         		switch(data[1].toNumber()) {
 	    	    		case 1:
-	    	    			this.betEnable	= true;
+	    	    			if(this.next>0)
+	    	    				this.betEnable	= true;
 	    	    			break;
 	    	    		default:
 	    	    			this.betEnable	= false;
@@ -222,6 +226,13 @@ let gameScene = cc.Scene.extend({
         		this.updateCards(data);
         		this.updateUI();
     		}
+    },
+    onUpdateState:function() {
+    		this.time+=1000;
+    		// todo 
+    		if(this.next-this.time<0)	console.log(this.state,'Pending...');
+    		else							console.log(this.state,parseInt((this.next-this.time)/1000)+' Sec');
+    		// todo 
     },
     updateUI:function() {
 		for(let i = 0 ; i < this.fxUI.length ; i++)
@@ -267,7 +278,7 @@ let gameScene = cc.Scene.extend({
     		return btn;
     },
     initGeneral:function () {
-		this.round = cc.LabelTTF.create("", "Roboto", 40);
+		this.round = cc.LabelTTF.create("", "Montserrat", 40);
 		this.round.setPosition(cc.winSize.width / 2, cc.winSize.height -45);
 		this.addChild(this.round, 1);
     },
@@ -277,12 +288,12 @@ let gameScene = cc.Scene.extend({
 	    this.addChild(pot);
 	    this.fxUI.push(pot);
 
-		let label = cc.LabelTTF.create(name, "Roboto", 30);
+		let label = cc.LabelTTF.create(name, "Montserrat", 30);
 	    label.setPosition(posX,posY+55);
 		this.addChild(label);
 		this.fxUI.push(label);
 		
-	    let odd = cc.LabelTTF.create("x "+odds, "Roboto", 20);
+	    let odd = cc.LabelTTF.create("x "+odds, "Montserrat", 20);
 	    odd.setPosition(posX,posY-60);
 		this.addChild(odd);
 		this.fxUI.push(odd);
@@ -309,11 +320,11 @@ let gameScene = cc.Scene.extend({
     		this.oddUI['bet1']['odd']	= this.initBetPot(cc.winSize.width/2+218,cc.winSize.height/5+20,"PLAYER","2",this.clickBet,1);
     		this.oddUI['bet2']['odd']	= this.initBetPot(cc.winSize.width/2,	cc.winSize.height/5+20,"TIE","9",this.clickBet,2);
     		
-    		this.oddUI['bet0']['point']	= cc.LabelTTF.create("", "Roboto", 30);
+    		this.oddUI['bet0']['point']	= cc.LabelTTF.create("", "Montserrat", 30);
     		this.oddUI['bet0']['point'].setPosition(cc.winSize.width/2-50,cc.winSize.height/2-30);
     		this.addChild(this.oddUI['bet0']['point']);
     		
-    		this.oddUI['bet1']['point']	= cc.LabelTTF.create("", "Roboto", 30);
+    		this.oddUI['bet1']['point']	= cc.LabelTTF.create("", "Montserrat", 30);
     		this.oddUI['bet1']['point'].setPosition(cc.winSize.width/2+50,cc.winSize.height/2-30);
     		this.addChild(this.oddUI['bet1']['point']);
     		
@@ -346,11 +357,11 @@ let gameScene = cc.Scene.extend({
 		this.oddUI['bet1']['odd']	= this.initBetPot(cc.winSize.width/2+218,cc.winSize.height/5+20,"TIGER","2",this.clickBet,1);
 		this.oddUI['bet2']['odd']	= this.initBetPot(cc.winSize.width/2,	cc.winSize.height/5+20,"TIE","9",this.clickBet,2);
 		
-		this.oddUI['bet0']['point']	= cc.LabelTTF.create("", "Roboto", 30);
+		this.oddUI['bet0']['point']	= cc.LabelTTF.create("", "Montserrat", 30);
 		this.oddUI['bet0']['point'].setPosition(cc.winSize.width/2-50,cc.winSize.height/2-30);
 		this.addChild(this.oddUI['bet0']['point']);
 		
-		this.oddUI['bet1']['point']	= cc.LabelTTF.create("", "Roboto", 30);
+		this.oddUI['bet1']['point']	= cc.LabelTTF.create("", "Montserrat", 30);
 		this.oddUI['bet1']['point'].setPosition(cc.winSize.width/2+50,cc.winSize.height/2-30);
 		this.addChild(this.oddUI['bet1']['point']);
 

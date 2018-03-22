@@ -1,12 +1,12 @@
 let chat	= new function() {
-	socket:null,
+	this.socket=null,
 	this.start	= function(output,input,url,nick='',game='',ch=0) {
+		nick		= nick.length>5?nick.substring(2,10):nick;
 		$(input).on('keyup', function (e) {
 		    if (e.keyCode == 13 && chat.socket!=null) {
 		    		if($(input).val()=="")
 		    			return;    		    		
 		    		let msg = $(input).val();
-		    		nick		= nick.length>5?nick.substring(2,10):nick;
 		    		$(input).val('');
 		    		chat.socket.emit('chat',{'game':game,'ch':ch,'nick':nick,'msg':msg});
 		    }

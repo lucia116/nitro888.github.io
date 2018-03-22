@@ -82,10 +82,11 @@
 	    <!-- game -->
 	    <section class="bg-light text-dark mb-0" id="lotto953">
 	      <div class="container">
-			<h4 class="text-uppercase" id="gameTitle"></h4>
+			<table style="width:100%"><tr><td id="gameTitle" class="text-uppercase h4"></td><td style="float:right;"><small><button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo()"><i class="material-icons" style="font-size:20px;">announcement</i></button></small></td></tr></table>
 	      	<div class="row" id="gameTop">
 				<div class="col-md-6 panel" id="gameFrame">
 					<canvas id="gameCanvas" width=720 height=720 style="background:linear-gradient(to bottom, #33cc33 0%, #006600 100%)"></canvas>
+					<div><small style="float:right;" id="price"></small></div>
 				</div>
 				<div class="col-md-6 panel">
 					<div id="line"><h6>HISTORY</h6></div>
@@ -144,88 +145,11 @@
 	<script src="cocos2d-js-v3.13-lite.js"></script>
 	<script src="../util.js"></script>
 	<script src="../chat.js"></script>
+	<script src="index.js"></script>
 	<script src="game.js"></script>
-
     <script>
-		function resize() {
-	        $("#gameCanvas").width($("#gameFrame").innerWidth()-30);
-	        $("#gameCanvas").height($("#gameCanvas").width());
-	        if(($("#gameCanvas").width()+30)==$("#gameTop").width()) {
-	            $("#chatmessage").height($("#chatmessage").width());
-	            $('#line').html('<br/><h6>HISTORY</h6>');
-	        } else {
-	        		$("#chatmessage").height($("#gameCanvas").height()-$("#gameHistory").height()-$("#chatInput").height()-65);
-	        		$('#line').html('<h6>HISTORY</h6>');
-	        }
-		}
-		function history(game,address) {
-			let body		= '';
-			body		+="<div style='overflow-x:auto;'><table class='border border-secondary'>";
-			for(let i = 0 ; i < util.historyRow ; i ++){
-				body +="<tr>";
-				for(let j = 0 ; j < util.historyCol ; j++)
-					if((i*3+j)%2==0)
-						body	+="<td class='align-middle' bgcolor='#DEDEDE'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
-					else
-						body	+="<td class='align-middle bg-light'><div style='width:16px;' id='history_"+game+'_'+address+"_"+j+"_"+i+"' align='center'>&nbsp</div></td>";
-				body	+="</tr>";
-			}
-			body		+="</table></div>";
-			body		+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
-			
-			$("#gameHistory").html(body);
-		}
-		function hasAddr(addr,addrArray){
-			for(let i=0;i<addrArray.length;i++)
-				if(addrArray[i]==addr)
-					return true;
-			return false;
-		}
-		function UPDATE() {}
-
-		$(document).ready(function() {
-			let url	= new URL(location.href);
-			let game = url.searchParams.get("g");
-			let addr = url.searchParams.get("a");
-			history(game,addr);
-			resize();
-			
-			if(!game || !addr) {
-				location.href=location.origin;
-			} else
-				$.getJSON('../config.json', function(data) {
-					if(data!=null) {
-						CONFIG	= data;
-						if(!CONFIG[game])
-							location.href=location.origin;
-						else {
-							$('#gameTitle').html(CONFIG[game]['name']);
-							cc.game.onStart = function() {
-								cc.director.setDisplayStats(false);
-							    cc.view.enableRetina(true);
-							    cc.view.adjustViewPort(true);
-							    cc.view.resizeWithBrowserSize(true);
-							    cc.LoaderScene.preload(g_resources, function () {
-							    		cc.spriteFrameCache.addSpriteFrames(g_resources[0].src,g_resources[1].src);
-							    		const scene = new gameScene(game,addr); 
-							    		cc.director.runScene(scene);
-									wallet.start(function(){
-											if(wallet.state()!=2||!hasAddr(addr,CONFIG[game]['address']))
-												location.href=location.origin;
-											else
-												wallet.web3.eth.contract(CONFIG[game]['abi']).at(addr).information(function(e,r){if (!e){util.updateCasino(game,addr,r);scene.onUpdateGame(game,addr,r)}});
-										});
-									chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
-							    }, cc.game);
-							};
-							cc.game.run();
-						}
-					}				
-				});
-		});
-		window.addEventListener("resize",resize,true);
+		$(document).ready(page.start);
+		window.addEventListener("resize",page.resize,true);
     	</script>
-
   </body>
-
 </html>

@@ -88,12 +88,14 @@ let wallet	= new function() {
 	this.updateBalance			= function(callback) {
 		wallet.web3.eth.getBalance(storage.address, function(e,r){if (!e) {
 			wallet.balance=r.toNumber();
+			/*
 			// todo : show balance
 			if(wallet.state()==2&&wallet.balance>=0)
 				console.log("html updateBalance : " + wallet.balance);
 			else
 				console.log("html updateBalance : " + "");
 			// todo : show balance
+			*/
 			callback();
 			}});
 	},
@@ -540,6 +542,12 @@ let util	= new function() {
 		}
 		return result;
 	},
+	this.isGameAddress	= function(game,address){
+		for(let i=0;i<CONFIG[game]['address'].length;i++)
+			if(CONFIG[game]['address'][i]==address)
+				return true;
+		return false;
+	}
 	this.ticketLottoMark	= function (ticket,max,mark) {
 		if(util.ticketLottoMarkCount(ticket,max)>mark)
 			return false;
@@ -618,5 +626,33 @@ let util	= new function() {
 
 			b = win;
 		}
+	},
+	this.updateInfo		= function(game,address,data) {
+		wallet.updateTimer(true);
+
+		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
+
+		table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['ethscan']+'/address/'+address+'\',\'_blank\')"><small>'+address+"</small></td></tr>";
+		table		+="<tr><td>State</td><td>"+util.getGameState(parseInt(data[1]))+"</td></tr>";
+
+		if(game!='lotto953') {
+			table		+="<tr><td>Round</td><td>"+data[0][0] +"-" + data[0][1] +"-" + data[0][2]+"</td></tr>";
+			table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(data[4])+" ETH</td></tr>";
+			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data[6])+" ETH</td></tr>";
+			table		+="<tr><td>Pending transfer</td><td>"+data[11]+" remains</td></tr>";
+			table		+="<tr><td>Bankers Deposit</td><td>"+wallet.web3.fromWei(data[7])+" ETH </td></tr>";
+			table		+="<tr><td>Bankers</td><td>"+data[8].length+" / "+ data[9].toNumber()+" accounts </td></tr>";
+			table		+="<tr><td>Waitings</td><td>"+data[10].length+" accounts </td></tr>";
+		} else {
+			table		+="<tr><td>Round</td><td>"+data[0]+"</td></tr>";
+			table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(data[3])+" ETH</td></tr>";
+			table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(data[4])+" ETH</td></tr>";
+			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data[5])+" ETH</td></tr>";
+			table		+="<tr><td>Pending transfer</td><td>"+data[6]+" remains</td></tr>";
+			table		+="<tr><td>My tickets</td><td>"+data[7]+"</td></tr>";
+		}
+		
+		table		+="</tbody></table></div>";
+		modal.update(CONFIG[game]['name'],table);
 	}
 }

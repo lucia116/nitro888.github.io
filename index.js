@@ -105,34 +105,7 @@ let page		= new function() {
 	},
 	this.showInfo		= function(game,address) {
 		modal.update(CONFIG[game]['name'],'Now Loading...');
-		wallet.updateTimer(true);
-
-		contracts.info(game,address,function(_game,_address,_data){
-				let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
-
-				table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['ethscan']+'/address/'+_address+'\',\'_blank\')"><small>'+_address+"</small></td></tr>";
-				table		+="<tr><td>State</td><td>"+util.getGameState(parseInt(_data[1]))+"</td></tr>";
-
-				if(game!='lotto953') {
-					table		+="<tr><td>Round</td><td>"+_data[0][0] +"-" + _data[0][1] +"-" + _data[0][2]+"</td></tr>";
-					table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";
-					table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[6])+" ETH</td></tr>";
-					table		+="<tr><td>Pending transfer</td><td>"+_data[11]+" remains</td></tr>";
-					table		+="<tr><td>Bankers Deposit</td><td>"+wallet.web3.fromWei(_data[7])+" ETH </td></tr>";
-					table		+="<tr><td>Bankers</td><td>"+_data[8].length+" / "+ _data[9].toNumber()+" accounts </td></tr>";
-					table		+="<tr><td>Waitings</td><td>"+_data[10].length+" accounts </td></tr>";
-				} else {
-					table		+="<tr><td>Round</td><td>"+_data[0]+"</td></tr>";
-					table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(_data[3])+" ETH</td></tr>";
-					table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(_data[4])+" ETH</td></tr>";
-					table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(_data[5])+" ETH</td></tr>";
-					table		+="<tr><td>Pending transfer</td><td>"+_data[6]+" remains</td></tr>";
-					table		+="<tr><td>My tickets</td><td>"+_data[7]+"</td></tr>";
-				}
-				
-				table		+="</tbody></table></div>";
-				modal.update(CONFIG[game]['name'],table);
-			});
+		contracts.info(game,address,util.updateInfo);
 	},
 	this.showHistory= function (game,address,max) {
 		let marker	= [];

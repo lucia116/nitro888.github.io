@@ -166,9 +166,9 @@ let messageBox = cc.Layer.extend({
 });
 
 let gameScene = cc.Scene.extend({
-	game:-1,
-	contract:null,
-	round:null,
+	game:'',
+	address:'',
+	information:null,
 	betEnable:false,
 	state:-1,
 	time:-1,
@@ -178,10 +178,10 @@ let gameScene = cc.Scene.extend({
 	fxUI:new Array(),
 	messageBox:null,
 	openCards:new Array(),
-	ctor:function (game,contract) {
+	ctor:function (game,address) {
 		this._super();
 		this.game		= game;
-		this.contract	= contract;
+		this.address		= address;
 	},
 	onEnter:function () {
         this._super();
@@ -203,36 +203,37 @@ let gameScene = cc.Scene.extend({
 		this.messageBox	= new messageBox();
 		this.addChild(this.messageBox);
     },
-    onUpdateGame:function(game,contract,data) {
-    		if(game!=this.game||contract!=this.contract)
-    			return;
+    onUpdateGame:function(game,address,data) {
+    		if(game!=this.game||address!=this.address)
+    			return false;
 
     		if(this.state!=data[1].toNumber()) {
         		this.state		= data[1].toNumber();
-
-        		if(this.round!=null)
-        			this.round.string	= 'Round '+data[0][0]+'-'+data[0][1]+'-'+data[0][2];
-
-        		switch(data[1].toNumber()) {
-	    	    		case 1:
-	    	    			if(this.next>0)
-	    	    				this.betEnable	= true;
-	    	    			break;
-	    	    		default:
-	    	    			this.betEnable	= false;
-	    	    			break;
-        		}
-
         		this.updateCards(data);
-        		this.updateUI();
+        		
+    			if(this.next==-1||(this.next-this.time)<0)
+    				return true;
+    		}
+    		return false;
+    },
+    onUpdateInformation:function() {
+    		this.time+=1000;
+
+    		if(this.state==1 && (this.next-this.time)>0 && !this.betEnable) {
+    			this.betEnable	= true;
+    			this.updateUI();
+    		} else if((this.state!=1 || (this.next-this.time)<0) && this.betEnable) {
+    			this.betEnable	= false;
+    			this.updateUI();
+    		}
+
+    		if(this.information!=null) {
+        		if(this.next-this.time<0)	this.information.string	= 'Transaction Pending'+'.'.repeat(parseInt((this.time/1000)%5));
+        		else							this.information.string	= 'Next : ' + parseInt((this.next-this.time)/1000)+' Sec';
     		}
     },
-    onUpdateState:function() {
-    		this.time+=1000;
-    		// todo 
-    		if(this.next-this.time<0)	console.log(this.state,'Pending...');
-    		else							console.log(this.state,parseInt((this.next-this.time)/1000)+' Sec');
-    		// todo 
+    onFocus:function() {
+    		// todo : 
     },
     updateUI:function() {
 		for(let i = 0 ; i < this.fxUI.length ; i++)
@@ -278,9 +279,9 @@ let gameScene = cc.Scene.extend({
     		return btn;
     },
     initGeneral:function () {
-		this.round = cc.LabelTTF.create("", "Montserrat", 40);
-		this.round.setPosition(cc.winSize.width / 2, cc.winSize.height -45);
-		this.addChild(this.round, 1);
+		this.information = cc.LabelTTF.create("", "Montserrat", 40);
+		this.information.setPosition(cc.winSize.width / 2, cc.winSize.height -45);
+		this.addChild(this.information, 1);
     },
     initBetPot:function(posX,posY,name,odds,eventBet,slot) {
 		let pot = cc.Sprite.createWithSpriteFrameName("#frame.png");

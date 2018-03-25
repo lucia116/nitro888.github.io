@@ -82,9 +82,10 @@
 	    <!-- game -->
 	    <section class="bg-light text-dark mb-0" id="lotto953">
 	      <div class="container">
-			<table style="width:100%"><tr><td id="gameTitle" class="text-uppercase h4"></td><td style="float:right;"><small><button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo()"><i class="material-icons" style="font-size:20px;">announcement</i></button></small></td></tr></table>
+			<h2 class="text-center text-uppercase" id="gameTitle"></h2>	      
 	      	<div class="row" id="gameTop">
 				<div class="col-md-6 panel" id="gameFrame">
+					<table style="width:100%"><tr><td id="gameRound" class="text-uppercase h6"></td><td style="float:right;"><small><button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo()"><i class="material-icons" style="font-size:20px;">announcement</i></button></small></td></tr></table>
 					<canvas id="gameCanvas" width=720 height=720 style="background:linear-gradient(to bottom, #33cc33 0%, #006600 100%)"></canvas>
 					<div><small style="float:right;" id="price"></small></div>
 				</div>

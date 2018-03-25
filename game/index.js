@@ -2,7 +2,7 @@ let page = new function() {
 	this.game		= '',
 	this.address		= '',
 	this.scene		= null,
-	this.updateUrl	= '',
+	this.updateUrl	= 'https://nitro888chat.herokuapp.com',
 	this.showInfo	= function () {
 		modal.update(CONFIG[page.game]['name'],'Now Loading...');
 		wallet.web3.eth.contract(CONFIG[page.game]['abi']).at(page.address).information(function(e,r){if (!e){util.updateInfo(page.game,page.address,r);}});				
@@ -52,13 +52,15 @@ let page = new function() {
 					    		wallet.start(page.update);
 					    		chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
 					    		
-					    		setInterval(function(){page.scene.onUpdateState();},1000);
+					    		setInterval(function(){page.scene.onUpdateInformation();},1000);
 					    }, cc.game);
 					};
 					cc.game.run();
 				}
 			}				
 		});
+		
+		$(window).focus(function(){page.updateSchedule();page.scene.onFocus();});
 	},
 	this.update		= function () {
 		if(wallet.state()!=2)
@@ -68,16 +70,11 @@ let page = new function() {
 					function(e,r){
 						if (!e){
 							util.updateCasino(page.game,page.address,r);
-							if(page.scene.state!=parseInt(r[1]))
-								$.getJSON(page.updateUrl,function(data){
-									page.scene.last=data[page.address]['l'];
-									page.scene.next=data[page.address]['n'];
-									page.scene.time=data['time'];}
-								);
-							}
+							$('#gameRound').html('<strong>Round '+r[0][0]+'-'+r[0][1]+'-'+r[0][2]+'</strong><small> ('+util.getGameState(parseInt(r[1]))+')</small>');
 							$('#price').html("Bet : "+wallet.web3.fromWei(r[4].toNumber(),'ether')+" E");
-							page.scene.onUpdateGame(page.game,page.address,r);
-						});
+							if(page.scene.onUpdateGame(page.game,page.address,r)) 
+								page.updateSchedule();
+						}});
 	},
 	this.resize		= function () {
         $("#gameCanvas").width($("#gameFrame").innerWidth()-30);
@@ -86,9 +83,22 @@ let page = new function() {
             $("#chatmessage").height($("#chatmessage").width());
             $('#line').html('<br/><h6>HISTORY</h6>');
         } else {
-        		$("#chatmessage").height($("#gameCanvas").height()-$("#gameHistory").height()-$("#chatInput").height()-50);
+        		$("#chatmessage").height($("#gameCanvas").height()-$("#gameHistory").height()-$("#chatInput").height()-20);
         		$('#line').html('<h6>HISTORY</h6>');
         }
+	},
+	this.updateSchedule	= function() {
+		$.getJSON(page.updateUrl,function(data){
+			page.scene.last=data[page.address]['l'];
+			page.scene.next=data[page.address]['n'];
+			page.scene.time=data['time'];
+			
+			console.log(data);
+			/*
+			if(page.scene.next==-1)
+				setTimeout(page.updateSchedule,5000);
+				*/
+		});
 	}
 }		
 function UPDATE() {}

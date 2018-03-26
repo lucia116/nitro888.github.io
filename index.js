@@ -232,7 +232,7 @@ let page		= new function() {
 				modal.alert('<div class="alert alert-warning" role="alert">Password is wrong</div>');
 			{
 				wallet.updateBalance(function(){
-					if(balance<=(buyTicket.length*CONFIG[game]['informations'][CONFIG[game]['address'][0]][3].toNumber()))
+					if(wallet.balance<(buyTicket.length*CONFIG[game]['informations'][CONFIG[game]['address'][0]][3].toNumber()))
 						modal.alert('<div class="alert alert-warning" role="alert">Balance is too low</div>');
 					else
 						contracts.info(game,CONFIG[game]['address'][0],function(_game,_address,_data){

@@ -2,7 +2,7 @@ let page = new function() {
 	this.game		= '',
 	this.address		= '',
 	this.scene		= null,
-	this.updateUrl	= 'https://nitro888chat.herokuapp.com',
+	this.socketUrl	= 'https://nitro888main.herokuapp.com',
 	this.showInfo	= function () {
 		modal.update(CONFIG[page.game]['name'],'Now Loading...');
 		wallet.web3.eth.contract(CONFIG[page.game]['abi']).at(page.address).information(function(e,r){if (!e){util.updateInfo(page.game,page.address,r);}});				
@@ -50,7 +50,7 @@ let page = new function() {
 					    		cc.director.runScene(page.scene);
 
 					    		wallet.start(page.update);
-					    		chat.start('#chatmessage','#chatInput','https://nitro888chat.herokuapp.com',storage.address);
+					    		socket.start('#chatmessage','#chatInput',page.socketUrl,page.updateSchedule,storage.address);
 					    		
 					    		setInterval(function(){page.scene.onUpdateInformation();},1000);
 					    }, cc.game);
@@ -60,7 +60,7 @@ let page = new function() {
 			}				
 		});
 		
-		$(window).focus(function(){page.updateSchedule();page.scene.onFocus();});
+		$(window).focus(function(){socket.schedule();page.scene.onFocus();});
 	},
 	this.update		= function () {
 		if(wallet.state()!=2)
@@ -73,7 +73,7 @@ let page = new function() {
 							$('#gameRound').html('<strong>Round '+r[0][0]+'-'+r[0][1]+'-'+r[0][2]+'</strong><small> ('+util.getGameState(parseInt(r[1]))+')</small>');
 							$('#price').html("Bet : "+wallet.web3.fromWei(r[4].toNumber(),'ether')+" E");
 							if(page.scene.onUpdateGame(page.game,page.address,r)) 
-								page.updateSchedule();
+								socket.schedule();
 						}});
 	},
 	this.resize		= function () {
@@ -87,18 +87,10 @@ let page = new function() {
         		$('#line').html('<h6>HISTORY</h6>');
         }
 	},
-	this.updateSchedule	= function() {
-		$.getJSON(page.updateUrl,function(data){
-			page.scene.last=data[page.address]['l'];
-			page.scene.next=data[page.address]['n'];
-			page.scene.time=data['time'];
-			
-			console.log(data);
-			/*
-			if(page.scene.next==-1)
-				setTimeout(page.updateSchedule,5000);
-				*/
-		});
+	this.updateSchedule	= function(data) {
+		page.scene.last=data[page.address]['l'];
+		page.scene.next=data[page.address]['n'];
+		page.scene.time=data['time'];
 	}
 }		
 function UPDATE() {}

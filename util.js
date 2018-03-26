@@ -436,6 +436,7 @@ let wallet	= new function() {
 						let from		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
 						let to		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
 						let value	= wallet.web3.fromWei(data["result"][i]["value"],'ether');
+						let status	= data["result"][i]["txreceipt_status"]==0?"<div class='text-danger'><small>[CANCELLED]</small></div>":"";
 
 						//let gas		= data["result"][i]["gas"];
 						//let gasPrice	= data["result"][i]["gasPrice"];
@@ -446,9 +447,9 @@ let wallet	= new function() {
 						
 						if(data["result"][i]["from"]==storage.address) {
 							value *= -1;
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td class='align-middle align-right'>"+status+value+" ETH</td></tr>";
 						} else {
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td align='right'>"+value+" ETH</td></tr>";
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td class='align-middle align-right'>"+status+value+" ETH</td></tr>";
 						}
 					}
 					table		+= "</tbody></table></div>";

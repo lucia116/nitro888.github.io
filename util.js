@@ -44,8 +44,8 @@ let wallet	= new function() {
 			  switch (r) {
 			    case "1":	console.log('This is mainnet');								break;
 			    case "2":	console.log('This is the deprecated Morden test network.');	break;
-			    case "3":	console.log('This is the ropsten test network.');				break;
-			    default:		console.log('This is an unknown network.('+r+')');
+			    case "3":	console.log('This is the ropsten test network.');			break;
+			    default:	console.log('This is an unknown network.('+r+')');
 			  }
 			});
 	},
@@ -68,7 +68,7 @@ let wallet	= new function() {
 			wallet.updateTimer(true);
 		}
 
-		const engine		= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
+		const engine	= ZeroClientProvider({getAccounts: function(){},rpcUrl:CONFIG['network']['provider']});
 		wallet.web3		= new Web3(engine);
 		wallet.showEthNetwork();
 		engine.on('block', function(){wallet.updateTimer(false);wallet.updateNavAccount();if(wallet.state()==2)wallet.updateBalance(function(){/*todo*/});else wallet.balance=-1;update();});
@@ -334,7 +334,7 @@ let wallet	= new function() {
 		wallet.updateTimer(true);
 		let body	= '<div align="center"><p class="text-warning">!! WARNING! THIS NETWORK IS '+CONFIG['network']['name']+' !!</p></div>';
 		body		+="<div align='center'><img src='https://api.qrserver.com/v1/create-qr-code/?data="+storage.address+"&size=256x256 alt='' width='256' height='256'/></div><br/>";
-		body		+="<div align='center'><a class='text-primary' target='_blank' href='"+CONFIG['network']['ethscan']+"/address/"+storage.address+"'>"+storage.address+"</a></div>";
+		body		+="<div align='center'><a class='text-primary' target='_blank' href='"+CONFIG['network']['href']+"/address/"+storage.address+"'>"+storage.address+"</a></div>";
 		modal.update('Deposit',body);
 	},
 	this.withrawal		= function() {
@@ -365,7 +365,7 @@ let wallet	= new function() {
 						wallet.web3.eth.getTransaction(storage.tx,function(e,r){
 							if(!e)
 								if(r.blockNumber==null || parseInt(r.blockHash) == 0) 
-									modal.alert('<div class="alert alert-warning" role="alert">Transaction is pending : <br/><small><a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+storage.tx+'">'+storage.tx+'</a></small></div>');
+									modal.alert('<div class="alert alert-warning" role="alert">Transaction is pending : <br/><small><a target="_blank" href="'+CONFIG['network']['href']+'/tx/'+storage.tx+'">'+storage.tx+'</a></small></div>');
 								else {
 									storage.tx	= '';
 									storage.save();
@@ -407,7 +407,7 @@ let wallet	= new function() {
 								txParams['data']	= data;
 							let tx			= new ethereumjs.Tx(txParams);
 							tx.sign(new ethereumjs.Buffer.Buffer(privateKey, 'hex'));
-							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.alert('<div class="alert alert-warning" role="alert">Transaction Fail ('+e.message+')</div>'); else {modal.alert('<div class="alert alert-warning" role="alert">Success <small>(<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/'+r+'">'+r+'</a>)</small><div>');storage.tx=r;}});
+							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.alert('<div class="alert alert-warning" role="alert">Transaction Fail ('+e.message+')</div>'); else {modal.alert('<div class="alert alert-warning" role="alert">Success <small>(<a target="_blank" href="'+CONFIG['network']['href']+'/tx/'+r+'">'+r+'</a>)</small><div>');storage.tx=r;}});
 						}
 					});
 				}
@@ -423,18 +423,18 @@ let wallet	= new function() {
 		wallet.updateTimer(true);
 		modal.update('Transaction History',"Now Loading");
 
-		let jsonUrl	= CONFIG['network']['ethscan']+"/api?module=account&action=txlist&address="+storage.address+"&startblock=0&endblock=latest";
+		let jsonUrl	= CONFIG['network']['api']+"/api?module=account&action=txlist&address="+storage.address+"&startblock=0&endblock=latest&sort=desc";
 		$.getJSON(jsonUrl,function(data) {
 			if(data["result"].length==0)
 				modal.update('Transaction History',data["message"]);
 			else {
 					let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
 					
-					for(i=data["result"].length-1;i>=0;i--){
+					for(i=0;i<data["result"].length;i++){
 						let date		= new Date(data["result"][i]["timeStamp"]*1000);
-						let tx		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/tx/' + data["result"][i]["hash"] + '">'+data["result"][i]["hash"]+'</a>';
-						let from		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
-						let to		= '<a target="_blank" href="'+CONFIG['network']['ethscan']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
+						let tx		= '<a target="_blank" href="'+CONFIG['network']['href']+'/tx/' + data["result"][i]["hash"] + '">'+data["result"][i]["hash"]+'</a>';
+						let from		= '<a target="_blank" href="'+CONFIG['network']['href']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
+						let to		= '<a target="_blank" href="'+CONFIG['network']['href']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
 						let value	= wallet.web3.fromWei(data["result"][i]["value"],'ether');
 						let status	= data["result"][i]["txreceipt_status"]==0?"<div class='text-danger'><small>[CANCELLED]</small></div>":"";
 
@@ -447,9 +447,9 @@ let wallet	= new function() {
 						
 						if(data["result"][i]["from"]==storage.address) {
 							value *= -1;
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>To : "+to+"</small></div></td><td class='align-middle align-right'>"+status+value+" ETH</td></tr>";
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div class='d-inline-block text-truncate' style='max-width: 320px;'><small>Tx : "+tx+"</small></div><div class='d-inline-block text-truncate' style='max-width: 320px;'><small>To : "+to+"</small></div></td><td class='align-middle text-right'>"+status+value+" ETH</td></tr>";
 						} else {
-							table	+="<tr><td><div><h6>"+date+"</h6></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>Tx : "+tx+"</small></div><div style='width:320; text-overflow:ellipsis; overflow:hidden; white-space:nowrap'><small>From : "+from+"</small></div></td><td class='align-middle align-right'>"+status+value+" ETH</td></tr>";
+							table	+="<tr><td><div><h6>"+date+"</h6></div><div class='d-inline-block text-truncate' style='max-width: 320px;'><small>Tx : "+tx+"</small></div><div class='d-inline-block text-truncate' style='max-width: 320px;'><small>From : "+from+"</small></div></td><td class='align-middle text-right'>"+status+value+" ETH</td></tr>";
 						}
 					}
 					table		+= "</tbody></table></div>";
@@ -633,7 +633,7 @@ let util	= new function() {
 
 		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
 
-		table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['ethscan']+'/address/'+address+'\',\'_blank\')"><small>'+address+"</small></td></tr>";
+		table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['href']+'/address/'+address+'\',\'_blank\')"><small>'+address+"</small></td></tr>";
 		table		+="<tr><td>State</td><td>"+util.getGameState(parseInt(data[1]))+"</td></tr>";
 
 		if(game!='lotto953') {

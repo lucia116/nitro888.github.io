@@ -24,7 +24,7 @@ let socket	= new function() {
     			callback(data);
     		});
 	},
-	this.schedule	= function () {
-		socket.io.emit('schedule');	
+	this.schedule	= function (address) {
+		socket.io.emit('schedule',{'address':address});	
 	}
 }

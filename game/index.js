@@ -60,7 +60,7 @@ let page = new function() {
 			}				
 		});
 		
-		$(window).focus(function(){socket.schedule();page.scene.onFocus();});
+		$(window).focus(function(){socket.schedule(page.address);page.scene.onFocus();});
 	},
 	this.update		= function () {
 		if(wallet.state()!=2)
@@ -73,7 +73,7 @@ let page = new function() {
 							$('#gameRound').html('<strong>Round '+r[0][0]+'-'+r[0][1]+'-'+r[0][2]+'</strong><small> ('+util.getGameState(parseInt(r[1]))+')</small>');
 							$('#price').html("Bet : "+wallet.web3.fromWei(r[4].toNumber(),'ether')+" E");
 							if(page.scene.onUpdateGame(page.game,page.address,r)) 
-								socket.schedule();
+								socket.schedule(page.address);
 						}});
 	},
 	this.resize		= function () {
@@ -88,9 +88,13 @@ let page = new function() {
         }
 	},
 	this.updateSchedule	= function(data) {
-		page.scene.last=data[page.address]['l'];
-		page.scene.next=data[page.address]['n'];
 		page.scene.time=data['time'];
+		for(let i=0;i<data['schedule'].length;i++) {
+			if(data['schedule'][i]['address']==page.address) {
+				page.scene.last=parseInt(data['schedule'][i]['last']);
+				page.scene.next=parseInt(data['schedule'][i]['next']);
+			}
+		}
 	}
 }		
 function UPDATE() {}

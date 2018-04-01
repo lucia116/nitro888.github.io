@@ -3,7 +3,8 @@
 		"isMainNet"		: false,
 		"name"			: "Ropsten Test Network",
 		"provider"		: "https://ropsten.infura.io",
-		"ethscan"		: "https://ropsten.etherscan.io"
+		"api"			: "https://api-ropsten.etherscan.io",
+		"href"			: "https://ropsten.etherscan.io"
 	},
 	"lotto953" : {
 		"name"			:"Lotto 953", 

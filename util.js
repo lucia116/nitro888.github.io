@@ -2,7 +2,7 @@ let CONFIG	= {};
 
 let storage	= new function() {
 	this.wallet		= '';
-	this.address		= '';
+	this.address	= '';
 	this.tx			= '';
 	this.time		= 0;
 	this.load		= function() {
@@ -36,8 +36,8 @@ let storage	= new function() {
 
 let wallet	= new function() {
 	this.web3			= null;
-	this.balance			= -2;
-	this.stateBackup		= -1;
+	this.balance		= -2;
+	this.stateBackup	= -1;
 	this.timer			= 1800000;
 	this.showEthNetwork	= function() {
 		wallet.web3.version.getNetwork((e, r) => {
@@ -590,7 +590,7 @@ let util	= new function() {
 				$('#history_'+game+'_'+address+'_'+j+'_'+i).html('&nbsp');
 
 		let red		= "<i class='material-icons' style='font-size:16px;color:red'>brightness_1</i>";
-		let blue		= "<i class='material-icons' style='font-size:16px;color:blue'>brightness_1</i>";
+		let blue	= "<i class='material-icons' style='font-size:16px;color:blue'>brightness_1</i>";
 		let green	= "<i class='material-icons' style='font-size:16px;color:green'>brightness_1</i>";
 
 		let x1		= 0;
@@ -598,8 +598,8 @@ let util	= new function() {
 		let y		= 0;
 		let b		= -1;
 
-		$('#rnd_'+game+'_'+address).html("Round "+data[0][0].toNumber()+"-"+data[0][1].toNumber()+"-"+data[0][2].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
-		
+		$('#rnd_'+game+'_'+address).html("Round "+data[0][0].toNumber()+"-"+data[0][1].toNumber()+'<small> ('+util.getGameState(parseInt(data[1]))+')</small>');
+
 		for(let i = 0 ; i < history.length ; i++){
 			let 	temp		= util.win(game,history[i]);
 			let win		= temp['win'];
@@ -634,23 +634,23 @@ let util	= new function() {
 		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
 
 		table		+='<tr><td>Contract</td><td><a style="cursor:hand" onClick="window.open(\''+CONFIG['network']['href']+'/address/'+address+'\',\'_blank\')"><small>'+address+"</small></td></tr>";
-		table		+="<tr><td>State</td><td>"+util.getGameState(parseInt(data[1]))+"</td></tr>";
 
-		if(game!='lotto953') {
-			table		+="<tr><td>Round</td><td>"+data[0][0] +"-" + data[0][1] +"-" + data[0][2]+"</td></tr>";
-			table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(data[4])+" ETH</td></tr>";
-			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data[6])+" ETH</td></tr>";
-			table		+="<tr><td>Pending transfer</td><td>"+data[11]+" remains</td></tr>";
-			table		+="<tr><td>Bankers Deposit</td><td>"+wallet.web3.fromWei(data[7])+" ETH </td></tr>";
-			table		+="<tr><td>Bankers</td><td>"+data[8].length+" / "+ data[9].toNumber()+" accounts </td></tr>";
-			table		+="<tr><td>Waitings</td><td>"+data[10].length+" accounts </td></tr>";
-		} else {
-			table		+="<tr><td>Round</td><td>"+data[0]+"</td></tr>";
-			table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(data[3])+" ETH</td></tr>";
-			table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(data[4])+" ETH</td></tr>";
-			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data[5])+" ETH</td></tr>";
-			table		+="<tr><td>Pending transfer</td><td>"+data[6]+" remains</td></tr>";
-			table		+="<tr><td>My tickets</td><td>"+data[7]+"</td></tr>";
+		switch(game){
+		case 'lotto953':
+		case 'lotto645':
+			table		+="<tr><td>Round</td><td>"+data[0]+" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
+			table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
+			table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(data['cost'][0])+" ETH</td></tr>";
+			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
+			table		+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
+			//table		+="<tr><td>My tickets</td><td>"+data[7]+"</td></tr>";				
+			break;
+		default:
+			table		+="<tr><td>Round</td><td>"+data[0][0] +"-" + data[0][1] +" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
+			table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
+			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
+			table		+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
+			break;
 		}
 		
 		table		+="</tbody></table></div>";

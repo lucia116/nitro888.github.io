@@ -24,8 +24,9 @@ let contracts	= new function() {
 			contracts.info(game,address[i],callback);
 	},
 	this.buy			= function(game,address,tickets,password,callback) {
-		if(CONFIG[game]['contracts'][address]!=null) {
-			if(!wallet.sendTransaction(address,password,parseFloat(wallet.web3.fromWei(CONFIG[game]['informations'][address][3].toNumber()*tickets.length,'ether')),ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("buy(uint128[])", tickets))))
+		// fix it : "buy(uint64[])"
+		if(CONFIG[game]['contracts'][address]!=null && CONFIG[game]['contracts'][address].buy) {			
+			if(!wallet.sendTransaction(address,password,parseFloat(wallet.web3.fromWei(CONFIG[game]['informations'][address]['cost'][1].toNumber()*tickets.length,'ether')),ethereumjs.Util.bufferToHex(ethereumjs.ABI.simpleEncode("buy(uint64[])", tickets))))
 				callback('<div class="alert alert-warning" role="alert">Password is wrong</div>');
 		}
 	}
@@ -43,8 +44,8 @@ let page		= new function() {
 		let body		= '';
 		let address	= CONFIG[game]['address'][0];
 
-		body			+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
-		body			+="<div class='row'>";
+		body	+='<table style="width:100%"><tr><td id="rnd_'+game+'_'+address+'" class="h4">Round</td><td style="float:right;"><small id="btn_'+game+'_'+address+'"></small></td></tr></table>';
+		body	+="<div class='row'>";
 		for(let i=0 ; i < col ; i++) {
 			body		+='<div class="col-md-'+(12/col)+' panel"><div><small id="round_'+game+'_'+address+'_'+i+'">Round</small></div><div class="card-text">';
 			body		+='<table class="border border-secondary" style="width:100%;border-collapse: collapse;">';
@@ -52,21 +53,21 @@ let page		= new function() {
 				body+='<tr>';
 				for(let k=0 ; k < x ; k++)
 					if((j*x+k)%2==0)
-						body+="<td style='align-middle;' bgcolor='#DEDEDE'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>&nbsp</div></td>";
+						body+="<td style='align-middle;' bgcolor='#DEDEDE'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>"+util.getNumCircle('&nbsp',0)+"</div></td>";
 					else
-						body+="<td style='align-middle;' class='bg-light'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>&nbsp</div></td>";
+						body+="<td style='align-middle;' class='bg-light'><div align='center' valign='middle' id='"+game+'_'+address+"_"+i+"_"+(j*x+k)+"'>"+util.getNumCircle('&nbsp',0)+"</div></td>";
 				body+='</tr>';
 			}
-			body		+='</table></div></div>';
+			body	+='</table></div></div>';
 		}
-		body			+='</div>';
-		body			+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
+		body	+='</div>';
+		body	+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
 		
 		$(id).html(body);		
 	},
 	this.startCasino			= function(game,id) {
 		let body		= '';
-		
+
 		for(let k=0;k<CONFIG[game]['address'].length;k++) {
 			let address	= CONFIG[game]['address'][k];
 
@@ -84,32 +85,27 @@ let page		= new function() {
 			body	+="</table></div>";
 			body	+='<div class="row"><div class="col-md-6"><small id="pot_'+game+'_'+address+'"></small></div><div class="col-md-6"><small style="float:right;" id="price_'+game+'_'+address+'"></small></div></div>';
 		}
-		
+
 		$(id).html(body);		
 	},
 	this.updateBtn			= function(game,address) {
 		let btn		= '<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showInfo(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">announcement</i></button>';
 		
-		// todo : more lotto
+		// todo : 4 more lotto
 		switch(game) {
 		case 'lotto953':
 		case 'lotto645':
-			let max		= 0;
-			let mark	= 0;
-			switch(game) {
-			case 'lotto953': max=9;		mark=5;	break;
-			case 'lotto645': max=45;	mark=6;	break;
-			}
-			btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showHistory(\''+game+'\',\''+address+'\','+max+')"><i class="material-icons" style="font-size:20px;">history</i></button>'+btn;
+			let maxMark = util.getLottoMaxMarkCol(game);
+			btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.showHistory(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">history</i></button>'+btn;
 			if(wallet.state()==2)
-				btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.ticket(\''+game+'\',\''+address+'\','+max+','+mark+')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
+				btn	='<button data-toggle="modal" data-target="#modlg" type="button" class="btn btn-link btn-sm text-secondary" onClick="page.ticket(\''+game+'\',\''+address+'\','+maxMark.max+','+maxMark.mark+')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
 			break;
 		default:
 			if(wallet.state()==2)
 				btn	='<button type="button" class="btn btn-link btn-sm text-secondary" onClick="page.play(\''+game+'\',\''+address+'\')"><i class="material-icons" style="font-size:20px;">create</i></button>'+btn;
 			break;
 		}
-		// todo : more lotto		
+		// todo : 4 more lotto		
 		
 		return	btn;
 	},
@@ -117,30 +113,27 @@ let page		= new function() {
 		modal.update(CONFIG[game]['name'],'Now Loading...');
 		contracts.info(game,address,util.updateInfo);
 	},
-	this.showHistory= function (game,address,max) {
+	this.showHistory= function (game,address) {
 		if(CONFIG[game]['informations'][address][2].length==0) {
 			modal.update('History','History is empty...');
 			return;
 		}
 
-		let marker	= [];
-		for(let i = 0 ; i < max ; i++)
-			marker.push(1<<i);
-		
 		let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
 
 		for(let i = CONFIG[game]['informations'][address][2].length-1, k = CONFIG[game]['informations'][address][0].toNumber()-1 ; i > -1 ; i--, k--) {
 			let temp	= CONFIG[game]['informations'][address][2][i].toString(2);
-			let prize	= parseInt(temp.substring(0,temp.length-64),2);
-			let bonus	= parseInt(temp.substring(temp.length-64,temp.length),2);
-			let numbers	= '';
+			let temp1	= temp.substring(0,temp.length-64);
+			let temp2	= temp.substring(temp.length-64,temp.length);
+			let prize	= '';
+			let bonus	= '';
 
-			for(let j = 0 ; j < marker.length ; j++ ) {
-				if((marker[j]&prize)>0)	numbers +='<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>';
-				if((marker[j]&bonus)>0)	bonus	= '<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>';				
-			}
+			for(let j = temp1.length-1,k=1 ; j >=0  ; j--,k++ )
+				prize += temp1[j]=='1'?util.getNumCircle(k):'';
+			for(let j = temp2.length-1,k=1 ; j >=0  ; j--,k++ )
+				bonus += temp2[j]=='1'?util.getNumCircle(k,1,true):'';
 
-			table	+="<tr><td><div><center><small>R."+k+"</small></center></div><div><td>"+numbers+"&nbsp"+bonus+"</td></tr>";
+			table	+="<tr><td><div><center><small>R."+k+"</small></center></div><div><td>"+prize+"&nbsp"+bonus+"</td></tr>";
 		}
 
 		table		+= "</tbody></table></div>";
@@ -154,41 +147,27 @@ let page		= new function() {
 		$('#pot_'+game+'_'+address).html("Pot : "+wallet.web3.fromWei(data['cost'][0].toNumber(),'ether')+" E");
 		
 		let marker		= [];
-		let max			= 0;
-		let col			= 0;
-		
-		// todo : more lotto
-		switch(game) {
-			case 'lotto953':
-				max 	= 9;
-				col		= 6;
-			break;
-			case 'lotto645':
-				max 	= 45;
-				col		= 3;
-			break;
-		}
-		// todo : more lotto
+		let maxCol		= util.getLottoMaxMarkCol(game);
 
-		for(let i = 0 ; i < max ; i++)
+		for(let i = 0 ; i < maxCol.max ; i++)
 			marker.push(1<<i);
 
-		for(let i = (data[2].length>col ? data[2].length-col : 0), k = 0 ; i < data[2].length ; i++,k++)  {
+		for(let i = (data[2].length>maxCol.col ? data[2].length-maxCol.col : 0), k = 0 ; i < data[2].length ; i++,k++)  {
 
 			let temp	= data[2][i].toString(2);
 			let prize	= parseInt(temp.substring(0,temp.length-64),2);
 			let bonus	= parseInt(temp.substring(temp.length-64,temp.length),2);
 
-			if(data[2].length<col)
+			if(data[2].length<maxCol.col)
 				$('#round_'+game+'_'+address+'_'+k).html("Round "+(i+1));
 			else
-				$('#round_'+game+'_'+address+'_'+k).html("Round "+(data[0].toNumber()-col+k));
+				$('#round_'+game+'_'+address+'_'+k).html("Round "+(data[0].toNumber()-maxCol.col+k));
 			
 			for(let j = 0 ; j < marker.length ; j++ ) {
 				let mark		= '&nbsp';
-				if(marker[j]&prize) 			mark= '<a style="opacity: 1; color: #000000;">&#93'+(12+j)+'</a>'; 	// todo
-				else if(marker[j]&bonus)		mark= '<a style="opacity: 1; color: #FF5722;">&#93'+(12+j)+'</a>';	// todo 
-				else							mark= '<a style="opacity: 0.2;">&#93'+(12+j)+'</a>';				// todo
+				if(marker[j]&prize) 			mark= util.getNumCircle(1+j);
+				else if(marker[j]&bonus)		mark= util.getNumCircle(1+j,1,true); 
+				else							mark= util.getNumCircle(1+j,0.2);
 				$('#'+game+'_'+address+'_'+k+'_'+j).html(mark);
 			}
 		}

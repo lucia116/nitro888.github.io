@@ -251,10 +251,10 @@ let wallet	= new function() {
 	
 	// destory
 	this.destory			= function() {
-		let body			=	'<p class="text-danger">Destroy Wallet.</p>' +
-							'<div style="overflow-x:auto;">' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="destoryPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
-							'</div>';		
+		let body	=	'<p class="text-danger">Destroy Wallet.</p>' +
+						'<div style="overflow-x:auto;">' +
+						'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="destoryPass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
+						'</div>';		
 		modal.update('Destory',body,'wallet.destroyOK()');
 	},
 	this.destroyOK		= function() {
@@ -339,22 +339,22 @@ let wallet	= new function() {
 	},
 	this.withrawal		= function() {
 		wallet.updateTimer(true);
-		let body			=	'<div style="overflow-x:auto;">' +
-							'<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">account_balance_wallet</i></span></div><input id="withrawalAdr" type="text" class="form-control" placeholder="Withrawal Address" aria-label="Withrawal Address"></div>' +
-							'<div class="input-group mb-3"><input id="withrawalVal" type="number" step="any" class="form-control" placeholder="Withrawal Amount" aria-label="Withrawal Amount"></div>' +
-							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="withrawalPass" type="password" class="form-control" placeholder="Password" aria-label="Withrawal Password"></div>' +
-							'</div>';
+		let body	='<div style="overflow-x:auto;">' +
+					 '<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">account_balance_wallet</i></span></div><input id="withrawalAdr" type="text" class="form-control" placeholder="Withrawal Address" aria-label="Withrawal Address"></div>' +
+					 '<div class="input-group mb-3"><input id="withrawalVal" type="number" step="any" class="form-control" placeholder="Withrawal Amount" aria-label="Withrawal Amount"></div>' +
+					 '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="withrawalPass" type="password" class="form-control" placeholder="Password" aria-label="Withrawal Password"></div>' +
+					 '</div>';
 		modal.update('Withrawal',body,'wallet.withrawalOK()');
 	},
 	this.withrawalOK		= function() {
 		let address		= $('#withrawalAdr').val();
 		let amount		= $('#withrawalVal').val();
-		let password		= $('#withrawalPass').val();
+		let password	= $('#withrawalPass').val();
 		modal.alert('');
 		
 		if(address==''||amount==0||amount==''||password==''||!wallet.web3.isAddress(address)||address==storage.address) {
 			if(!wallet.web3.isAddress(address))	modal.alert('<div class="alert alert-warning" role="alert">Address is wrong</div>');
-			else if(address=='')					modal.alert('<div class="alert alert-warning" role="alert">Address is empty</div>');
+			else if(address=='')				modal.alert('<div class="alert alert-warning" role="alert">Address is empty</div>');
 			else if(amount==0||amount=='')		modal.alert('<div class="alert alert-warning" role="alert">Withrawal is zero</div>');
 			else if(password=='')				modal.alert('<div class="alert alert-warning" role="alert">Passward is empty</div>');
 			else if(address==storage.address)	modal.alert('<div class="alert alert-warning" role="alert">This is your address</div>');
@@ -385,7 +385,7 @@ let wallet	= new function() {
 			});
 		}
 	},
-	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=40000) {
+	this.sendTransaction		= function(address,password,amount,data=null,gasLimit=4700000) {
 		let privateKey	= wallet.getPrivateKeyString(password);
 
 		if(privateKey!=null) {
@@ -398,14 +398,14 @@ let wallet	= new function() {
 						if(e!=null) {
 							modal.alert('<div class="alert alert-warning" role="alert">Network error - getTransactionCount</div>');
 						} else {
-							let txParams		= {	'nonce'		:	wallet.web3.toHex(parseInt(t)),
+							let txParams	= {	'nonce'		:	wallet.web3.toHex(parseInt(t)),
 												'gasPrice'	:	gasPrice, 
 												'gasLimit'	:	wallet.web3.toHex(gasLimit),
-												'to'			:	address, 
+												'to'		:	address, 
 												'value'		:	wallet.web3.toHex(wallet.web3.toWei(amount, 'ether'))};
 							if(data!=null)
 								txParams['data']	= data;
-							let tx			= new ethereumjs.Tx(txParams);
+							let tx	= new ethereumjs.Tx(txParams);
 							tx.sign(new ethereumjs.Buffer.Buffer(privateKey, 'hex'));
 							wallet.web3.eth.sendRawTransaction('0x' + tx.serialize().toString('hex'), function(e,r) {if(e) modal.alert('<div class="alert alert-warning" role="alert">Transaction Fail ('+e.message+')</div>'); else {modal.alert('<div class="alert alert-warning" role="alert">Success <small>(<a target="_blank" href="'+CONFIG['network']['href']+'/tx/'+r+'">'+r+'</a>)</small><div>');storage.tx=r;}});
 						}
@@ -431,9 +431,9 @@ let wallet	= new function() {
 					let table	= "<div style='overflow-x:auto;'><table class='table table-striped table-hover'><tbody>";
 					
 					for(i=0;i<data["result"].length;i++){
-						let date		= new Date(data["result"][i]["timeStamp"]*1000);
+						let date	= new Date(data["result"][i]["timeStamp"]*1000);
 						let tx		= '<a target="_blank" href="'+CONFIG['network']['href']+'/tx/' + data["result"][i]["hash"] + '">'+data["result"][i]["hash"]+'</a>';
-						let from		= '<a target="_blank" href="'+CONFIG['network']['href']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
+						let from	= '<a target="_blank" href="'+CONFIG['network']['href']+'/address/' + data["result"][i]["from"] + '">'+data["result"][i]["from"]+'</a>'; 
 						let to		= '<a target="_blank" href="'+CONFIG['network']['href']+'/address/' + data["result"][i]["to"] + '">'+data["result"][i]["to"]+'</a>';
 						let value	= wallet.web3.fromWei(data["result"][i]["value"],'ether');
 						let status	= data["result"][i]["txreceipt_status"]==0?"<div class='text-danger'><small>[CANCELLED]</small></div>":"";
@@ -543,6 +543,21 @@ let util	= new function() {
 		}
 		return result;
 	},
+	this.getLottoMaxMarkCol= function(game){
+		let max		= 0;
+		let mark	= 0;
+		let col		= 0;
+		switch(game) {
+		case 'lotto953': max=9;	mark=5;col=6;break;
+		case 'lotto645': max=45;mark=6;col=3;break;
+		}
+		return {'max':max,'mark':mark,'col':col};
+	},
+	this.getNumCircle	= function(num,opacity=1,isRed=false) {
+		if(isRed)
+			return '<a class="numberCircle2" style="opacity: '+opacity+';">'+num+'</a>';
+		return '<a class="numberCircle1" style="opacity: '+opacity+';">'+num+'</a>';
+	},
 	this.isGameAddress	= function(game,address){
 		for(let i=0;i<CONFIG[game]['address'].length;i++)
 			if(CONFIG[game]['address'][i]==address)
@@ -638,18 +653,27 @@ let util	= new function() {
 		switch(game){
 		case 'lotto953':
 		case 'lotto645':
-			table		+="<tr><td>Round</td><td>"+data[0]+" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
-			table		+="<tr><td>Price</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
-			table		+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(data['cost'][0])+" ETH</td></tr>";
-			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
-			table		+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
-			//table		+="<tr><td>My tickets</td><td>"+data[7]+"</td></tr>";				
+			table	+="<tr><td>Round</td><td>"+data[0]+" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
+			table	+="<tr><td>Price</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
+			table	+="<tr><td>Balance</td><td>"+wallet.web3.fromWei(data['cost'][0])+" ETH</td></tr>";
+			table	+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
+			table	+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
+			if(data[3].length>0) {
+				table	+="<tr><td colspan='2'>My tickets</td></tr>";
+				for(let i = 0 ; i < data[3].length ; i++) {
+					let num		= data[3][i].toString(2);
+					let ticket	='';
+					for(let j=num.length-1,k=1;j>=0;j--,k++)
+						ticket	+= num[j]=='1'?'<a class="numberCircle1">'+k+'</a>':'';
+					table	+="<tr><td colspan='2'>"+ticket+"</td></tr>";
+				}
+			}
 			break;
 		default:
-			table		+="<tr><td>Round</td><td>"+data[0][0] +"-" + data[0][1] +" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
-			table		+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
-			table		+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
-			table		+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
+			table	+="<tr><td>Round</td><td>"+data[0][0] +"-" + data[0][1] +" <small>("+util.getGameState(parseInt(data[1]))+")</small></td></tr>";
+			table	+="<tr><td>Bet</td><td>"+wallet.web3.fromWei(data['cost'][1])+" ETH</td></tr>";
+			table	+="<tr><td>Transfer fee</td><td>"+wallet.web3.fromWei(data['cost'][2])+" ETH</td></tr>";
+			table	+="<tr><td>Pending transfer</td><td>"+data['cost'][3]+" remains</td></tr>";
 			break;
 		}
 		

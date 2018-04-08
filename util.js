@@ -301,7 +301,7 @@ let wallet	= new function() {
 			return;
 		}
 
-		let body			=	'<div style="overflow-x:auto;">' +
+		let body		=	'<div style="overflow-x:auto;">' +
 							'<div class="input-group mb-3"><input id="restoreStr" type="text" class="form-control" placeholder="Restore string" aria-label="Restore string"></div>' +
 							'<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="material-icons">lock</i></span></div><input id="restorePass" type="password" class="form-control" placeholder="Password" aria-label="Password"></div>' +
 							'</div>';		

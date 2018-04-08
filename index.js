@@ -146,30 +146,24 @@ let page		= new function() {
 		$('#price_'+game+'_'+address).html("Ticket : "+wallet.web3.fromWei(data['cost'][1].toNumber(),'ether')+" E");
 		$('#pot_'+game+'_'+address).html("Pot : "+wallet.web3.fromWei(data['cost'][0].toNumber(),'ether')+" E");
 		
-		let marker		= [];
 		let maxCol		= util.getLottoMaxMarkCol(game);
 
-		for(let i = 0 ; i < maxCol.max ; i++)
-			marker.push(1<<i);
-
 		for(let i = (data[2].length>maxCol.col ? data[2].length-maxCol.col : 0), k = 0 ; i < data[2].length ; i++,k++)  {
-
 			let temp	= data[2][i].toString(2);
-			let prize	= parseInt(temp.substring(0,temp.length-64),2);
-			let bonus	= parseInt(temp.substring(temp.length-64,temp.length),2);
+			let temp1	= temp.substring(0,temp.length-64);
+			let temp2	= temp.substring(temp.length-64,temp.length);
 
 			if(data[2].length<maxCol.col)
 				$('#round_'+game+'_'+address+'_'+k).html("Round "+(i+1));
 			else
 				$('#round_'+game+'_'+address+'_'+k).html("Round "+(data[0].toNumber()-maxCol.col+k));
-			
-			for(let j = 0 ; j < marker.length ; j++ ) {
-				let mark		= '&nbsp';
-				if(marker[j]&prize) 			mark= util.getNumCircle(1+j);
-				else if(marker[j]&bonus)		mark= util.getNumCircle(1+j,1,true); 
-				else							mark= util.getNumCircle(1+j,0.2);
-				$('#'+game+'_'+address+'_'+k+'_'+j).html(mark);
-			}
+
+			for(let j = 0 ; j < maxCol.max ; j++)
+				$('#'+game+'_'+address+'_'+k+'_'+j).html(util.getNumCircle(1+j,0.2));
+			for(let j = temp1.length-1,l=0 ; j >=0  ; j--,l++ )
+				temp1[j]=='1'?$('#'+game+'_'+address+'_'+k+'_'+l).html(util.getNumCircle(1+l)):'';
+			for(let j = temp2.length-1,l=0 ; j >=0  ; j--,l++ )
+				temp2[j]=='1'?$('#'+game+'_'+address+'_'+k+'_'+l).html(util.getNumCircle(1+l,1,true)):'';
 		}
 	},
 	this.updateCasino	= function(game,address,data) {
